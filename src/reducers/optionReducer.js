@@ -1,20 +1,24 @@
 // This is where our actual state is going to go. And where we check our actions
 
-import { START_GAME } from '../actions/types';
+import { PLAYERS, STAKES } from '../actions/types';
 
 const initialState = {
-  options: {
     playerCount: 2,
     stakeAmount: 1
-  }
 };
 
 export default function(state = initialState, action) {
   switch(action.type) {
-    case START_GAME:
+    case STAKES:
       return {
-        ...state
+        ...state,
+        stakeAmount: action.payload
       };
+    case PLAYERS:
+    return {
+      ...state,
+      playerCount: action.payload
+    };
     default:
       return state;
   }

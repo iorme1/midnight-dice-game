@@ -1,3 +1,4 @@
 // constants that are set to strings that we export
 
-export const START_GAME = 'START_GAME';
+export const PLAYERS = 'PLAYERS';
+export const STAKES = 'STAKES';
