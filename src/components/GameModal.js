@@ -3,6 +3,7 @@ import dollarConverter from '../utils/dollarConverter';
 import { setPlayers, setStakes } from '../actions/optionActions';
 import { connect } from 'react-redux';
 import {
+  Container,
   Button,
   Modal,
   ModalHeader,
@@ -34,20 +35,39 @@ class GameModal extends Component {
       this.props.setStakes(value);
     } else {
       value = parseInt(value);
-      
-      this.props.setPlayers(value);
+      let players = [];
+      let playerNumber = 1;
+
+      while (playerNumber <= value) {
+        let playerDetails = {};
+        playerDetails[`${playerNumber}`] = "guest";
+        players.push(playerDetails);
+        playerNumber+=1;
+      }
+
+      this.props.setPlayers(players);
     }
   }
 
   onSubmit = (e) => {
     e.preventDefault();
-    // Close modal
+    //  issue here where if for example you have 5 players, and u
+    // open up the modal and by default it has 2 players selected
+    // with $1 stake. If you just select apply selection it wont
+    // change anything cuz the "onChange" won't run since you
+    // haven't physically changed anything even though the default
+    // of the selections are different than your current selections.
+    // therefore I think something in the onSubmit should make the
+    // changes rather than the onChange. OR make the default of
+    // the select inputs be the same as the CURRENT state of the options.
+
+    //closes modal
     this.toggle();
   }
 
   render() {
     return  (
-      <div>
+      <Container>
         <Button
           color="dark"
           className="m-5"
@@ -95,13 +115,13 @@ class GameModal extends Component {
                   type="submit"
                   block
                 >
-                  Start Game
+                  Apply Selections
                 </Button>
               </FormGroup>
             </Form>
           </ModalBody>
         </Modal>
-      </div>
+      </Container>
     );
   }
 }

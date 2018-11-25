@@ -6,7 +6,7 @@ class PlayerRow extends Component {
     return (
       <tr>
         <th scope="row">0</th>
-        <td>0</td>
+        <td>$0</td>
         <td>{this.props.name}</td>
       </tr>
     );

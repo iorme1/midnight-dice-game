@@ -7,8 +7,8 @@ import { connect } from 'react-redux';
 class Scoreboard extends Component {
 
   render() {
-    let { playerCount } = this.props.options;
-    let playerRows = [1,2,3,4,5]
+
+    let { players } = this.props.options;
 
     return (
       <Container>
@@ -26,12 +26,12 @@ class Scoreboard extends Component {
                 </tr>
               </thead>
               <tbody>
-                {playerRows.map((row,i) => (
+                {players.map( (player,i) => (
                   <PlayerRow
-                    key={`player_${i}`}
-                    name={`player_${i+1}`}
-                    />)
-                )}
+                    key={`player${i}`}
+                    name={`player${i+1}`}
+                  />
+                ))}
               </tbody>
             </Table>
           </div>

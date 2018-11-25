@@ -3,7 +3,10 @@
 import { PLAYERS, STAKES } from '../actions/types';
 
 const initialState = {
-    playerCount: 2,
+    players: [
+      { 1: "guest", profit: 0 },
+      { 2: "guest", profit: 0 }
+    ],
     stakeAmount: 1
 };
 
@@ -17,7 +20,7 @@ export default function(state = initialState, action) {
     case PLAYERS:
     return {
       ...state,
-      playerCount: action.payload
+      players: action.payload
     };
     default:
       return state;
