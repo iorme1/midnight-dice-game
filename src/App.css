@@ -1,0 +1,10 @@
+html {
+  min-height: 100%;
+}
+
+body {
+  background: linear-gradient(rgba(255,255,255,.2), rgba(255,255,255,.2)),url('./images/dice-bg.jpg');
+  background-size: cover;
+  background-repeat: no-repeat;
+  min-height: 100%;
+}

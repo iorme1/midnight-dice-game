@@ -4,8 +4,8 @@ import { PLAYERS, STAKES } from '../actions/types';
 
 const initialState = {
     players: [
-      { 1: "guest", profit: 0 },
-      { 2: "guest", profit: 0 }
+      { id: 1, profit: 0, selections: [], active: "true" },
+      { id: 2, profit: 0, selections: [], active: "false" }
     ],
     stakeAmount: 1
 };

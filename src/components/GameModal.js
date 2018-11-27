@@ -39,8 +39,15 @@ class GameModal extends Component {
       let playerNumber = 1;
 
       while (playerNumber <= value) {
-        let playerDetails = {};
-        playerDetails[`${playerNumber}`] = "guest";
+        let playerDetails = {
+          id: playerNumber,
+          profit: 0,
+          selections: [],
+        };
+          // Game is just starting here, player1 by default will be active first
+        if (playerNumber === 1) playerDetails.active = "true";
+        else playerDetails.active = "false";
+
         players.push(playerDetails);
         playerNumber+=1;
       }
@@ -68,13 +75,6 @@ class GameModal extends Component {
   render() {
     return  (
       <Container>
-        <Button
-          color="dark"
-          className="m-5"
-          onClick={this.toggle}
-        >
-          OPTIONS
-        </Button>
         <Modal
           isOpen={this.state.modal}
           toggle={this.toggle}
