@@ -31,7 +31,7 @@ class Scoreboard extends Component {
               style={
                 {
                   backgroundColor: 'white',
-                  opacity: 0.9,
+                  opacity: 0.8,
                   border: '2px solid black'
                 }
               }>
