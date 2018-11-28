@@ -1,4 +1,4 @@
-import { ROLL_DICE, PLAYER_CHANGE } from './types';
+import { ROLL_DICE, PLAYER_CHANGE, TAKE_FROM_ROLL } from './types';
 
 export const rollDice = (roll) => (dispatch) => {
   dispatch({
@@ -13,3 +13,10 @@ export const playerChange = (nextPlayer) => (dispatch) => {
     payload: nextPlayer
   });
 };
+
+export const takeFromRoll = (dice) => (dispatch) => {
+  dispatch({
+    type: TAKE_FROM_ROLL,
+    payload: dice
+  })
+}

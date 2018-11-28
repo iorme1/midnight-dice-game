@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import random from '../utils/random';
 import { connect } from 'react-redux';
-import { rollDice } from '../actions/gameActions';
+import { rollDice , takeFromRoll } from '../actions/gameActions';
+import { addToSelection } from '../actions/optionActions';
 import Dice from './Dice';
 import { Container,Button} from 'reactstrap';
 import {
@@ -13,6 +14,7 @@ import {
   faDiceSix,
 } from '@fortawesome/free-solid-svg-icons';
 
+
 class Roll extends Component {
   rollDice = () => {
     let board = [0,0,0,0,0,0]
@@ -20,11 +22,16 @@ class Roll extends Component {
     this.props.rollDice(roll);
   }
 
-/* removeFromRoll = (dice) => {
-    this.props.remove(dice);
-  } */
+ takeFromRoll = (diceIdx) => {
+   let { currentRoll } = this.props.game;
+   let updatedRoll = currentRoll.filter((el,idx) => idx !== diceIdx )
+   this.props.takeFromRoll(updatedRoll)
+
+   // Now we need to take the dice number and add it to the current players' selection.
+  }
 
   render() {
+
     let { currentRoll } = this.props.game;
     // maps integers to classes for fontawesome  dice visuals
     const diceMap = {
@@ -52,6 +59,7 @@ class Roll extends Component {
             <Dice
               key={`dice${i}`}
               diceNumber={diceMap[dice]}
+              take={this.takeFromRoll.bind(this, i)}
             />
           ))}
         </div>
@@ -61,7 +69,8 @@ class Roll extends Component {
 }
 
 const mapStateToProps = (state) => ({
-  game: state.game
+  game: state.game,
+  options: state.options
 });
 
-export default connect(mapStateToProps, { rollDice })(Roll);
+export default connect(mapStateToProps, { rollDice, takeFromRoll, addToSelection })(Roll);

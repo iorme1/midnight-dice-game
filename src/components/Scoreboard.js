@@ -17,10 +17,7 @@ class Scoreboard extends Component {
     this.props.playerChange(0); */
   }
 
-
-
   render() {
-
     let { players } = this.props.options;
 
     return (

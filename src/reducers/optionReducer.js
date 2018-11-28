@@ -1,6 +1,6 @@
 // This is where our actual state is going to go. And where we check our actions
 
-import { PLAYERS, STAKES } from '../actions/types';
+import { PLAYERS, STAKES, ADD_TO_SELECTION } from '../actions/types';
 
 const initialState = {
     players: [
@@ -18,6 +18,11 @@ export default function(state = initialState, action) {
         stakeAmount: action.payload
       };
     case PLAYERS:
+    return {
+      ...state,
+      players: action.payload
+    };
+    case ADD_TO_SELECTION:
     return {
       ...state,
       players: action.payload

@@ -4,17 +4,17 @@ import { connect } from 'react-redux';
 
 class Dice extends Component {
   render() {
+
     const rollAnimation = 'animated rollIn main-dice';
-    const mainDice = 'main-dice';
 
     return (
       <div className="col-md-1 mt-5">
         <FontAwesomeIcon
-          className={rollAnimation, mainDice}
+          className={rollAnimation}
           icon={this.props.diceNumber}
           size="3x"
           color="white"
-          onClick=""
+          onClick={this.props.take}
         />
       </div>
     );
