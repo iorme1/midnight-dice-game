@@ -14,9 +14,9 @@ export const setPlayers = (players) => (dispatch) => {
   });
 };
 
-export const addToSelection = (dice) => (dispatch) => {
+export const addToSelection = (player) => (dispatch) => {
   dispatch({
     type: ADD_TO_SELECTION,
-    payload: dice
-  })
-}
+    payload: player
+  });
+};

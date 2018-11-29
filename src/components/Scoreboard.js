@@ -19,7 +19,7 @@ class Scoreboard extends Component {
 
   render() {
     let { players } = this.props.options;
-
+  
     return (
       <Container>
         <div className="row">

@@ -22,12 +22,30 @@ class Roll extends Component {
     this.props.rollDice(roll);
   }
 
- takeFromRoll = (diceIdx) => {
+ takeFromRoll = (diceIdx, diceNum) => {
    let { currentRoll } = this.props.game;
+   let currentPlayer = this.props.options.players.find(player => player.active === "true");
    let updatedRoll = currentRoll.filter((el,idx) => idx !== diceIdx )
-   this.props.takeFromRoll(updatedRoll)
 
-   // Now we need to take the dice number and add it to the current players' selection.
+   this.props.takeFromRoll(updatedRoll)
+   this.addToSelection(currentPlayer, diceNum)
+  }
+
+  addToSelection(player, diceNum) {
+     let updatedPlayerSelection = {...player};
+     let updatedPlayersState = [...this.props.options.players];
+
+     updatedPlayerSelection.selections.push(diceNum);
+
+     updatedPlayersState.map(playerInfo => {
+       if (playerInfo.id === player.id) {
+         return updatedPlayerSelection;
+       } else {
+         return playerInfo;
+       }
+     });
+
+     this.props.addToSelection(updatedPlayersState);
   }
 
   render() {
@@ -59,7 +77,7 @@ class Roll extends Component {
             <Dice
               key={`dice${i}`}
               diceNumber={diceMap[dice]}
-              take={this.takeFromRoll.bind(this, i)}
+              take={this.takeFromRoll.bind(this, i, dice)}
             />
           ))}
         </div>
