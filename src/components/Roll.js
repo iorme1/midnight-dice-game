@@ -3,16 +3,9 @@ import random from '../utils/random';
 import { connect } from 'react-redux';
 import { rollDice , takeFromRoll } from '../actions/gameActions';
 import { addToSelection } from '../actions/optionActions';
+import { diceMap } from '../utils/diceMap';
 import Dice from './Dice';
 import { Container,Button} from 'reactstrap';
-import {
-  faDiceOne,
-  faDiceTwo,
-  faDiceThree,
-  faDiceFour,
-  faDiceFive,
-  faDiceSix,
-} from '@fortawesome/free-solid-svg-icons';
 
 
 class Roll extends Component {
@@ -49,18 +42,8 @@ class Roll extends Component {
   }
 
   render() {
-
     let { currentRoll } = this.props.game;
-    // maps integers to classes for fontawesome  dice visuals
-    const diceMap = {
-      1: faDiceOne,
-      2: faDiceTwo,
-      3: faDiceThree,
-      4: faDiceFour,
-      5: faDiceFive,
-      6: faDiceSix
-    };
-
+  
     return (
       <Container>
         <div className="row">

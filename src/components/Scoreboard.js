@@ -19,7 +19,7 @@ class Scoreboard extends Component {
 
   render() {
     let { players } = this.props.options;
-  
+
     return (
       <Container>
         <div className="row">
@@ -45,6 +45,7 @@ class Scoreboard extends Component {
                   <PlayerRow
                     key={`player${i}`}
                     name={`player${player.id}`}
+                    id={player.id}
                     active={player.active}
                   />
                 ))}
