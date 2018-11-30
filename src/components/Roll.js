@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import random from '../utils/random';
 import { connect } from 'react-redux';
-import { rollDice , takeFromRoll } from '../actions/gameActions';
+import { rollDice , takeFromRoll, resetRoll } from '../actions/gameActions';
 import { addToSelection, playerChange } from '../actions/optionActions';
 import { diceMap } from '../utils/diceMap';
 import Dice from './Dice';
@@ -25,28 +25,32 @@ class Roll extends Component {
     this.props.takeFromRoll(updatedRoll)
     this.addToSelection(currentPlayer, diceNum)
 
-    // possibly extract this game status checking logic elsewhere:
     if (currentPlayer.selections.length === 6) {
-      let updatedPlayersState = [...this.props.options.players];
-      let updatedCurrentPlayer = {...currentPlayer};
-      let currentPlayerID = updatedCurrentPlayer.id;
-      let nextPlayerID = currentPlayerID + 1;
-
-      // need this check to determine if we have passed the player array length
-      if (nextPlayerID > this.props.options.players.length) {
-        nextPlayerID = 1;
-      }
-
-      updatedPlayersState.map(player => {
-          if (player.id === currentPlayerID) {
-            player.active = "false";
-          } else if (player.id === nextPlayerID) {
-            player.active = "true";
-          } 
-          return player;
-      });
-      this.props.playerChange(updatedPlayersState)
+      this.playerChange(currentPlayer);
+      this.resetRoll();
     }
+  }
+
+  playerChange(currentPlayer) {
+    let updatedPlayersState = [...this.props.options.players];
+    let updatedCurrentPlayer = {...currentPlayer};
+    let currentPlayerID = updatedCurrentPlayer.id;
+    let nextPlayerID = currentPlayerID + 1;
+
+    // need this check to determine if we have passed the player array length
+    if (nextPlayerID > this.props.options.players.length) {
+      nextPlayerID = 1;
+    }
+
+    updatedPlayersState.map(player => {
+        if (player.id === currentPlayerID) {
+          player.active = "false";
+        } else if (player.id === nextPlayerID) {
+          player.active = "true";
+        }
+        return player;
+    });
+    this.props.playerChange(updatedPlayersState)
   }
 
 
@@ -65,6 +69,11 @@ class Roll extends Component {
     });
 
     this.props.addToSelection(updatedPlayersState);
+  }
+
+  resetRoll() {
+    let newDiceState = [0,0,0,0,0,0];
+    this.props.resetRoll(newDiceState);
   }
 
   render() {
@@ -104,6 +113,7 @@ export default connect(mapStateToProps, {
    rollDice,
    takeFromRoll,
    addToSelection,
-   playerChange
+   playerChange,
+   resetRoll
  }
 )(Roll);
