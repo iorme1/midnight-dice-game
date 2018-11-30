@@ -4,8 +4,8 @@ import { PLAYERS, STAKES, ADD_TO_SELECTION, PLAYER_CHANGE } from '../actions/typ
 
 const initialState = {
     players: [
-      { id: 1, profit: 0, selections: [], active: "true" },
-      { id: 2, profit: 0, selections: [], active: "false" }
+      { id: 1, profit: 0, selections: [], active: "true", playedTurn: false },
+      { id: 2, profit: 0, selections: [], active: "false", playedTurn: false }
     ],
     stakeAmount: 1
 };

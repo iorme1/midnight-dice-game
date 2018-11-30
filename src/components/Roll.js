@@ -17,6 +17,7 @@ class Roll extends Component {
     this.props.rollDice(updatedRoll);
   }
 
+
   takeFromRoll = (diceIdx, diceNum) => {
     let { currentRoll } = this.props.game;
     let currentPlayer = this.props.options.players.find(player => player.active === "true");
@@ -31,6 +32,7 @@ class Roll extends Component {
     }
   }
 
+
   playerChange(currentPlayer) {
     let updatedPlayersState = [...this.props.options.players];
     let updatedCurrentPlayer = {...currentPlayer};
@@ -43,14 +45,26 @@ class Roll extends Component {
     }
 
     updatedPlayersState.map(player => {
-        if (player.id === currentPlayerID) {
-          player.active = "false";
-        } else if (player.id === nextPlayerID) {
-          player.active = "true";
-        }
-        return player;
+      if (player.id === currentPlayerID) {
+        player.active = "false";
+        player.playedTurn = true;
+      } else if (player.id === nextPlayerID) {
+        player.active = "true";
+      }
+      return player;
     });
-    this.props.playerChange(updatedPlayersState)
+
+    if (this.roundOver(updatedPlayersState)) {
+      this.determineWinner(updatedPlayersState);
+      this.resetPlayerSelections(updatedPlayersState);
+    } else {
+      this.props.playerChange(updatedPlayersState);
+    }
+  }
+
+
+  roundOver(playerState) {
+    return playerState.every(player => player.playedTurn );
   }
 
 
@@ -71,10 +85,22 @@ class Roll extends Component {
     this.props.addToSelection(updatedPlayersState);
   }
 
+
   resetRoll() {
     let newDiceState = [0,0,0,0,0,0];
     this.props.resetRoll(newDiceState);
   }
+
+
+  determineWinner(updatedPlayersState) {
+
+  }
+
+
+  resetPlayerSelections(updatedPlayersState) {
+    
+  }
+
 
   render() {
     let { currentRoll } = this.props.game;
