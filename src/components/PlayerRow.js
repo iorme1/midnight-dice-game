@@ -6,16 +6,14 @@ import { diceMap } from '../utils/diceMap';
 class PlayerRow extends Component {
   render() {
 
-    const { name } = this.props;
-    const { id } = this.props;
-    const { active } = this.props;
-
+    const { name, id, active } = this.props;
     const player = this.props.options.players.find(player => player.id === id);
     const status = active === "false" ? "No" : "Yes";
     const rollAnimation = 'animated rollIn main-dice';
+    const rowStatus = active === "false" ? "" : "row-active";
 
     return (
-      <tr>
+      <tr className={rowStatus}>
         <td>
           {player.selections.map((data,i) => (
             <FontAwesomeIcon

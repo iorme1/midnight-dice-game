@@ -1,4 +1,4 @@
-import { PLAYERS, STAKES, ADD_TO_SELECTION } from './types';
+import { PLAYERS, STAKES, ADD_TO_SELECTION, PLAYER_CHANGE } from './types';
 
 export const setStakes = (stakes) => (dispatch) => {
   dispatch({
@@ -18,5 +18,12 @@ export const addToSelection = (player) => (dispatch) => {
   dispatch({
     type: ADD_TO_SELECTION,
     payload: player
+  });
+};
+
+export const playerChange = (players) => (dispatch) => {
+  dispatch({
+    type: PLAYER_CHANGE,
+    payload: players
   });
 };

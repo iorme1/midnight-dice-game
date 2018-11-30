@@ -25,3 +25,7 @@ body {
   transform: scale(1.1);
   color: red;
 }
+
+.row-active {
+  background: #ffdd59;
+}
