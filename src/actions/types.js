@@ -7,3 +7,4 @@ export const RESET_ROLL = 'RESET_ROLL';
 export const PLAYER_CHANGE = 'PLAYER_CHANGE';
 export const TAKE_FROM_ROLL = 'TAKE_FROM_ROLL';
 export const ADD_TO_SELECTION = "ADD_TO_SELECTION";
+export const QUALIFICATION = "QUALIFICATION";

@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import random from '../utils/random';
 import { connect } from 'react-redux';
 import { rollDice , takeFromRoll, resetRoll } from '../actions/gameActions';
-import { addToSelection, playerChange } from '../actions/optionActions';
+import { addToSelection, playerChange, qualification } from '../actions/optionActions';
 import { diceMap } from '../utils/diceMap';
 import Dice from './Dice';
 import { Container,Button} from 'reactstrap';
@@ -54,12 +54,23 @@ class Roll extends Component {
       return player;
     });
 
+    this.qualificationHandler(currentPlayer, updatedPlayersState);
+    // this.totalScore(currentPlayer, updatedPlayersState)
+
     if (this.roundOver(updatedPlayersState)) {
       this.determineWinner(updatedPlayersState);
       this.resetPlayerSelections(updatedPlayersState);
     } else {
       this.props.playerChange(updatedPlayersState);
     }
+  }
+
+  totalScore(currentPlayer, updatedPlayersState) {
+    // change the scoreTotal in currentPlayer object
+    // by totaling up their selection numbers (or skipping this and keeping default 0 score if not qualified)
+    // then map through updatedPlayersState parameter and change
+    // the object of that has the same id as the currentPlayer param
+    // then send off to an action
   }
 
 
@@ -93,12 +104,39 @@ class Roll extends Component {
 
 
   determineWinner(updatedPlayersState) {
-
+    //let highestScore = 0;
+    //let winningPlayer = null;
   }
 
 
   resetPlayerSelections(updatedPlayersState) {
-    
+
+  }
+
+
+  qualificationHandler(currentPlayer, updatedPlayersState) {
+    let qualifiers = {
+      4: false,
+      1: false
+    };
+
+    currentPlayer.selections.forEach(dice => {
+      if (dice === 4) {
+        if (qualifiers[4] === false) qualifiers[4] = true;
+      } else if (dice === 1) {
+        if (qualifiers[1] === false) qualifiers[1] = true;
+      }
+    });
+
+    if (qualifiers[4] && qualifiers[1]) {
+      updatedPlayersState.map(player => {
+        if (player.id === currentPlayer.id) {
+          player.qualified = true;
+        }
+        return player;
+      });
+      this.props.qualification(updatedPlayersState);
+    }
   }
 
 
@@ -140,6 +178,7 @@ export default connect(mapStateToProps, {
    takeFromRoll,
    addToSelection,
    playerChange,
-   resetRoll
+   resetRoll,
+   qualification
  }
 )(Roll);

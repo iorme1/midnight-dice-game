@@ -43,7 +43,9 @@ class GameModal extends Component {
           id: playerNumber,
           profit: 0,
           selections: [],
-          playedTurn: false
+          playedTurn: false,
+          scoreTotal: 0,
+          qualified: false
         };
         // Game is just starting here, player1 by default will be active first
         if (playerNumber === 1) playerDetails.active = "true";

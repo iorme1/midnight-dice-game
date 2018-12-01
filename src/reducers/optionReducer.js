@@ -1,11 +1,23 @@
-// This is where our actual state is going to go. And where we check our actions
-
-import { PLAYERS, STAKES, ADD_TO_SELECTION, PLAYER_CHANGE } from '../actions/types';
+import { 
+  PLAYERS,
+  STAKES,
+  ADD_TO_SELECTION,
+  PLAYER_CHANGE,
+  QUALIFICATION
+} from '../actions/types';
 
 const initialState = {
     players: [
-      { id: 1, profit: 0, selections: [], active: "true", playedTurn: false },
-      { id: 2, profit: 0, selections: [], active: "false", playedTurn: false }
+      {
+        id: 1, profit: 0, selections: [],
+        active: "true", playedTurn: false,
+        scoreTotal: 0, qualified: false
+      },
+      {
+        id: 2, profit: 0, selections: [],
+        active: "false", playedTurn: false,
+        scoreTotal: 0, qualified: false
+      }
     ],
     stakeAmount: 1
 };
@@ -31,7 +43,12 @@ export default function(state = initialState, action) {
       return {
         ...state,
         players: action.payload
-      }
+      };
+    case QUALIFICATION:
+      return {
+        ...state,
+        players: action.payload
+      };
     default:
       return state;
   }
