@@ -6,8 +6,9 @@ import { diceMap } from '../utils/diceMap';
 class PlayerRow extends Component {
   render() {
 
-    const { name, id, active } = this.props;
+    const { name, id, active, profit } = this.props;
     const player = this.props.options.players.find(player => player.id === id);
+    const profitColor = profit >= 0 ? "green" : "red";
     const status = active === "false" ? "No" : "Yes";
     const rollAnimation = 'animated rollIn main-dice';
     const rowStatus = active === "false" ? "" : "row-active";
@@ -25,7 +26,7 @@ class PlayerRow extends Component {
             />
           ))}
         </td>
-        <td>$0</td>
+        <td style={{color: profitColor}}>${profit}</td>
         <td>{name}</td>
         <td>{status}</td>
       </tr>

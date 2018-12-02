@@ -35,6 +35,7 @@ class Scoreboard extends Component {
                     name={`player${player.id}`}
                     id={player.id}
                     active={player.active}
+                    profit={player.profit}
                   />
                 ))}
               </tbody>
