@@ -61,7 +61,6 @@ class Roll extends Component {
   }
 
 
-
   playerChange(currentPlayer) {
     let nextPlayerID = currentPlayer.id + 1;
     // need this check to determine if we have passed the player array length
@@ -107,13 +106,48 @@ class Roll extends Component {
 
 
   determineWinner(updatedPlayersState) {
-    //let highestScore = 0;
-    //let winningPlayer = null;
+    let highestScore = null;
+    let winningPlayers = [];
+    let index = 0;
+    let sortedScores = [...updatedPlayersState].sort((a,b) => {
+      return a.scoreTotal > b.scoreTotal ? -1 : 1
+    });
+
+    highestScore = sortedScores[index];
+
+    while (sortedScores[index].scoreTotal === highestScore) {
+      winningPlayers.push(sortedScores[index])
+      index += 1;
+    }
+
+    if (winningPlayers.length > 1) {
+      this.tieHandler(updatedPlayersState);
+    } else {
+      updatedPlayersState.map(player =>{
+       if (player.id !== updatedPlayersState[0].id) player.profit -= this.props.options.stakeAmount;
+       return player;
+     });
+     this.props.updatePlayerStats(updatedPlayersState)
+   }
   }
 
+  tieHandler(updatedPlayersState) {
+    let newPlayerState = updatedPlayersState.map(player => {
+      player.profit -= this.props.options.stakeAmount;
+      return player;
+    });
+
+    this.props.updatePlayerStats(newPlayerState)
+  }
 
   resetPlayerSelections(updatedPlayersState) {
+    let newPlayerState = updatedPlayersState.map(player => {
+      player.selections = [];
+      player.playedTurn = false;
+      return player;
+    });
 
+    this.props.updatePlayerStats(newPlayerState);
   }
 
 
