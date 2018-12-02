@@ -1,9 +1,8 @@
-import { 
+import {
   PLAYERS,
   STAKES,
   ADD_TO_SELECTION,
-  PLAYER_CHANGE,
-  QUALIFICATION
+  UPDATE_PLAYER_STATS
 } from '../actions/types';
 
 const initialState = {
@@ -39,16 +38,11 @@ export default function(state = initialState, action) {
         ...state,
         players: action.payload
       };
-    case PLAYER_CHANGE:
+    case UPDATE_PLAYER_STATS:
       return {
         ...state,
         players: action.payload
-      };
-    case QUALIFICATION:
-      return {
-        ...state,
-        players: action.payload
-      };
+      }
     default:
       return state;
   }

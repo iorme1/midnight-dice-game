@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import random from '../utils/random';
 import { connect } from 'react-redux';
 import { rollDice , takeFromRoll, resetRoll } from '../actions/gameActions';
-import { addToSelection, playerChange, qualification } from '../actions/optionActions';
+import { addToSelection, updatePlayerStats} from '../actions/optionActions';
 import { diceMap } from '../utils/diceMap';
 import Dice from './Dice';
 import { Container,Button} from 'reactstrap';
@@ -27,50 +27,53 @@ class Roll extends Component {
     this.addToSelection(currentPlayer, diceNum)
 
     if (currentPlayer.selections.length === 6) {
-      this.playerChange(currentPlayer);
+      this.handleTurnCompletion(currentPlayer);
       this.resetRoll();
     }
   }
 
 
-  playerChange(currentPlayer) {
+  handleTurnCompletion(currentPlayer) {
     let updatedPlayersState = [...this.props.options.players];
-    let updatedCurrentPlayer = {...currentPlayer};
-    let currentPlayerID = updatedCurrentPlayer.id;
-    let nextPlayerID = currentPlayerID + 1;
-
-    // need this check to determine if we have passed the player array length
-    if (nextPlayerID > this.props.options.players.length) {
-      nextPlayerID = 1;
-    }
+    let updatedCurrentPlayer = { ...currentPlayer};
+    let nextPlayerID = this.playerChange(updatedCurrentPlayer);
+    let hasQualified = this.qualificationHandler(updatedCurrentPlayer);
+    let totalScore = hasQualified ? this.totalScore(updatedCurrentPlayer) : 0;
 
     updatedPlayersState.map(player => {
-      if (player.id === currentPlayerID) {
-        player.active = "false";
+      if (player.id === currentPlayer.id) {
+        currentPlayer.active = "false";
         player.playedTurn = true;
+        player.scoreTotal = totalScore;
+        player.qualified = hasQualified;
       } else if (player.id === nextPlayerID) {
         player.active = "true";
       }
       return player;
     });
 
-    this.qualificationHandler(currentPlayer, updatedPlayersState);
-    // this.totalScore(currentPlayer, updatedPlayersState)
+    this.props.updatePlayerStats(updatedPlayersState);
 
     if (this.roundOver(updatedPlayersState)) {
       this.determineWinner(updatedPlayersState);
       this.resetPlayerSelections(updatedPlayersState);
-    } else {
-      this.props.playerChange(updatedPlayersState);
     }
   }
 
-  totalScore(currentPlayer, updatedPlayersState) {
-    // change the scoreTotal in currentPlayer object
-    // by totaling up their selection numbers (or skipping this and keeping default 0 score if not qualified)
-    // then map through updatedPlayersState parameter and change
-    // the object of that has the same id as the currentPlayer param
-    // then send off to an action
+
+
+  playerChange(currentPlayer) {
+    let nextPlayerID = currentPlayer.id + 1;
+    // need this check to determine if we have passed the player array length
+    if (nextPlayerID > this.props.options.players.length) {
+      nextPlayerID = 1;
+    }
+    return nextPlayerID;
+  }
+
+  totalScore(currentPlayer) {
+     // subtracting 5 from score due to qualifying dice 1 & 4
+    return currentPlayer.selections.reduce((sum,accum) => sum += accum) - 5;
   }
 
 
@@ -114,7 +117,7 @@ class Roll extends Component {
   }
 
 
-  qualificationHandler(currentPlayer, updatedPlayersState) {
+  qualificationHandler(currentPlayer) {
     let qualifiers = {
       4: false,
       1: false
@@ -128,15 +131,7 @@ class Roll extends Component {
       }
     });
 
-    if (qualifiers[4] && qualifiers[1]) {
-      updatedPlayersState.map(player => {
-        if (player.id === currentPlayer.id) {
-          player.qualified = true;
-        }
-        return player;
-      });
-      this.props.qualification(updatedPlayersState);
-    }
+    return qualifiers[4] && qualifiers[1];
   }
 
 
@@ -177,8 +172,7 @@ export default connect(mapStateToProps, {
    rollDice,
    takeFromRoll,
    addToSelection,
-   playerChange,
    resetRoll,
-   qualification
+   updatePlayerStats
  }
 )(Roll);

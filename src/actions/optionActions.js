@@ -2,8 +2,7 @@ import {
   PLAYERS,
   STAKES,
   ADD_TO_SELECTION,
-  PLAYER_CHANGE,
-  QUALIFICATION
+  UPDATE_PLAYER_STATS
 } from './types';
 
 export const setStakes = (stakes) => (dispatch) => {
@@ -27,16 +26,9 @@ export const addToSelection = (player) => (dispatch) => {
   });
 };
 
-export const playerChange = (players) => (dispatch) => {
+export const updatePlayerStats = (players) => (dispatch) => {
   dispatch({
-    type: PLAYER_CHANGE,
-    payload: players
-  });
-};
-
-export const qualification = (players) => (dispatch) => {
-  dispatch({
-    type: QUALIFICATION,
+    type: UPDATE_PLAYER_STATS,
     payload: players
   });
 };
