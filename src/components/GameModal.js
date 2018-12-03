@@ -27,51 +27,35 @@ class GameModal extends Component {
     });
   }
 
-  onChange = (e) => {
-    let value = e.target.value
-
-    if (value.includes("$")) {
-      value = dollarConverter(value);
-      this.props.setStakes(value);
-    } else {
-      value = parseInt(value);
-      let players = [];
-      let playerNumber = 1;
-
-      while (playerNumber <= value) {
-        let playerDetails = {
-          id: playerNumber,
-          profit: 0,
-          selections: [],
-          playedTurn: false,
-          scoreTotal: 0,
-          qualified: false
-        };
-        // Game is just starting here, player1 by default will be active first
-        if (playerNumber === 1) playerDetails.active = "true";
-        else playerDetails.active = "false";
-
-        players.push(playerDetails);
-        playerNumber+=1;
-      }
-
-      this.props.setPlayers(players);
-    }
-  }
-
   onSubmit = (e) => {
     e.preventDefault();
-    //  issue here where if for example you have 5 players, and u
-    // open up the modal and by default it has 2 players selected
-    // with $1 stake. If you just select apply selection it wont
-    // change anything cuz the "onChange" won't run since you
-    // haven't physically changed anything even though the default
-    // of the selections are different than your current selections.
-    // therefore I think something in the onSubmit should make the
-    // changes rather than the onChange. OR make the default of
-    // the select inputs be the same as the CURRENT state of the options.
 
-    //closes modal
+    const stakeAmount = dollarConverter(e.target[1].value);
+    this.props.setStakes(stakeAmount);
+
+    const playerCount = e.target[0].value;
+    let players = [];
+    let playerNumber = 1;
+
+    while (playerNumber <= playerCount) {
+      let playerDetails = {
+        id: playerNumber,
+        profit: -stakeAmount, // start off player with the ante
+        selections: [],
+        playedTurn: false,
+        scoreTotal: 0,
+        qualified: false
+      };
+      // Game is just starting here, player1 by default will be active first
+      if (playerNumber === 1) playerDetails.active = "true";
+      else playerDetails.active = "false";
+
+      players.push(playerDetails);
+      playerNumber+=1;
+    }
+
+    this.props.setPlayers(players);
+    // closes modal
     this.toggle();
   }
 
@@ -92,7 +76,6 @@ class GameModal extends Component {
                 name="playercount"
                 id="playerSelect"
                 className="mb-2"
-                onChange={this.onChange}
               >
                 <option>2</option>
                 <option>3</option>
@@ -104,7 +87,6 @@ class GameModal extends Component {
                   type="select"
                   name="stakes"
                   id="stakeselect"
-                  onChange={this.onChange}
                 >
                   <option>$1</option>
                   <option>$2</option>
