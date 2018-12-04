@@ -1,7 +1,13 @@
 import React, { Component } from 'react';
 import random from '../utils/random';
 import { connect } from 'react-redux';
-import { rollDice , takeFromRoll, resetRoll, roundStart } from '../actions/gameActions';
+import {
+  rollDice,
+  takeFromRoll,
+  resetRoll,
+  roundStart,
+  rollAvailable
+ } from '../actions/gameActions';
 import { addToSelection, updatePlayerStats} from '../actions/optionActions';
 import { diceMap } from '../utils/diceMap';
 import Dice from './Dice';
@@ -10,15 +16,22 @@ import { Container,Button} from 'reactstrap';
 
 class Roll extends Component {
   rollDice = () => {
-    if (this.props.game.roundInProgress === false ) {
+    if (this.props.game.roundInProgress === false) {
       alert('Round has not begun yet')
       return;
     }
-    let { currentRoll } = this.props.game;
-    let roll = [...currentRoll];
 
-    let updatedRoll = roll.map(dice => random(1, 6))
-    this.props.rollDice(updatedRoll);
+    if (this.props.game.rollAvailable) {
+      let { currentRoll } = this.props.game;
+      let roll = [...currentRoll];
+
+      let updatedRoll = roll.map(dice => random(1, 6))
+      this.props.rollDice(updatedRoll);
+      // make roll unavailable until user selects a die.
+      this.props.rollAvailable(false);
+    } else {
+      alert('You must pick at least one die before rolling again');
+    }
   }
 
 
@@ -29,6 +42,8 @@ class Roll extends Component {
 
     this.props.takeFromRoll(updatedRoll)
     this.addToSelection(currentPlayer, diceNum)
+    // we have taken at least one die here, so we have option to roll again.
+    this.props.rollAvailable(true);
 
     if (currentPlayer.selections.length === 6) {
       this.handleTurnCompletion(currentPlayer);
@@ -220,6 +235,7 @@ export default connect(mapStateToProps, {
    addToSelection,
    resetRoll,
    updatePlayerStats,
-   roundStart
+   roundStart,
+   rollAvailable
  }
 )(Roll);
