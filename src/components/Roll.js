@@ -36,6 +36,7 @@ class Roll extends Component {
   handleTurnCompletion(currentPlayer) {
     let updatedPlayersState = [...this.props.options.players];
     let updatedCurrentPlayer = { ...currentPlayer};
+
     let nextPlayerID = this.playerChange(updatedCurrentPlayer);
     let hasQualified = this.qualificationHandler(updatedCurrentPlayer);
     let totalScore = hasQualified ? this.totalScore(updatedCurrentPlayer) : 0;
@@ -52,11 +53,15 @@ class Roll extends Component {
       return player;
     });
 
-    this.props.updatePlayerStats(updatedPlayersState);
-
     if (this.roundOver(updatedPlayersState)) {
       this.determineWinner(updatedPlayersState);
       this.resetPlayerSelections(updatedPlayersState);
+
+      // need to change the state passed here with an updated version of the player who starts the next round
+      this.props.updatePlayerStats(updatedPlayersState);
+      //new round therefore starting player is the next player after the last starting player
+    } else {
+      this.props.updatePlayerStats(updatedPlayersState);
     }
   }
 
@@ -124,7 +129,7 @@ class Roll extends Component {
       this.tieHandler(updatedPlayersState);
     } else {
       updatedPlayersState.map(player =>{
-       if (player.id !== updatedPlayersState[0].id) player.profit -= this.props.options.stakeAmount;
+       if (player.id !== sortedScores[0].id) player.profit -= this.props.options.stakeAmount;
        return player;
      });
      this.props.updatePlayerStats(updatedPlayersState)
