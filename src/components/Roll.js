@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import random from '../utils/random';
 import { connect } from 'react-redux';
-import { rollDice , takeFromRoll, resetRoll } from '../actions/gameActions';
+import { rollDice , takeFromRoll, resetRoll, roundStart } from '../actions/gameActions';
 import { addToSelection, updatePlayerStats} from '../actions/optionActions';
 import { diceMap } from '../utils/diceMap';
 import Dice from './Dice';
@@ -10,6 +10,10 @@ import { Container,Button} from 'reactstrap';
 
 class Roll extends Component {
   rollDice = () => {
+    if (this.props.game.roundInProgress === false ) {
+      alert('Round has not begun yet')
+      return;
+    }
     let { currentRoll } = this.props.game;
     let roll = [...currentRoll];
 
@@ -56,7 +60,8 @@ class Roll extends Component {
     if (this.roundOver(updatedPlayersState)) {
       this.determineWinner(updatedPlayersState);
       this.resetPlayerSelections(updatedPlayersState);
-
+      // Make Start Round Btn available again
+      this.props.roundStart(false);
       // need to change the state passed here with an updated version of the player who starts the next round
       this.props.updatePlayerStats(updatedPlayersState);
       //new round therefore starting player is the next player after the last starting player
@@ -129,7 +134,9 @@ class Roll extends Component {
       this.tieHandler(updatedPlayersState);
     } else {
       updatedPlayersState.map(player =>{
-       if (player.id !== sortedScores[0].id) player.profit -= this.props.options.stakeAmount;
+       if (player.id === sortedScores[0].id) {
+         player.profit += (this.props.options.players.length * this.props.options.stakeAmount);
+       }
        return player;
      });
      this.props.updatePlayerStats(updatedPlayersState)
@@ -212,6 +219,7 @@ export default connect(mapStateToProps, {
    takeFromRoll,
    addToSelection,
    resetRoll,
-   updatePlayerStats
+   updatePlayerStats,
+   roundStart
  }
 )(Roll);

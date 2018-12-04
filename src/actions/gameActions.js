@@ -1,4 +1,4 @@
-import { ROLL_DICE, TAKE_FROM_ROLL, RESET_ROLL} from './types';
+import { ROLL_DICE, TAKE_FROM_ROLL, RESET_ROLL, ROUND_STATUS_CHANGE} from './types';
 
 export const rollDice = (roll) => (dispatch) => {
   dispatch({
@@ -20,3 +20,10 @@ export const resetRoll = (roll) => (dispatch) => {
     payload: roll
   });
 };
+
+export const roundStart = (roundStatus) => (dispatch) => {
+  dispatch({
+    type: ROUND_STATUS_CHANGE,
+    payload: roundStatus
+  })
+}

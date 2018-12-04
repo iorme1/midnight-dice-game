@@ -40,7 +40,7 @@ class GameModal extends Component {
     while (playerNumber <= playerCount) {
       let playerDetails = {
         id: playerNumber,
-        profit: -stakeAmount, // start off player with the ante
+        profit: 0,
         selections: [],
         playedTurn: false,
         scoreTotal: 0,
