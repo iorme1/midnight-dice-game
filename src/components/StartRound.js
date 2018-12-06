@@ -5,27 +5,32 @@ import { updatePlayerStats } from '../actions/optionActions';
 import { roundStart } from '../actions/gameActions';
 
 class StartRound extends Component {
-
     startGame = () => {
       if (this.props.game.roundInProgress) {
-        alert('Round is already in progress dumb-dumb');
+        alert('Round is already in progress...');
         return;
       }
 
-      let updatedPlayersState = [...this.props.options.players];
       let { stakeAmount } = this.props.options;
 
-      // player ante up
-      updatedPlayersState.map(player => {
-        player.profit -= stakeAmount;
-        return player;
-      })
-
-      // change the round status state
+      this.setPlayerAntes(stakeAmount)
       this.props.roundStart(true)
-      // change profit state
+    }
+
+
+    setPlayerAntes = (stakeAmount) => {
+      let playersState = this.props.options.players;
+
+      let updatedPlayersState = playersState.map(player => {
+        return  {
+          ...player,
+          profit: player.profit - stakeAmount
+        };
+      });
+
       this.props.updatePlayerStats(updatedPlayersState);
     }
+
 
     render() {
       return (

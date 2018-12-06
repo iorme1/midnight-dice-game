@@ -10,10 +10,11 @@ import {
 
 const initialState = {
   currentRoll: [0,0,0,0,0,0],
-  roundInProgress: false, // this state determines wheter you can click the start round button or not
-  rollAvailable: true  //this state determines whether a player can roll or if they must choose a die before rolling again
+  roundInProgress: false,
+  rollAvailable: true,
+  pot: 0
 };
-
+ 
 export default function(state = initialState, action) {
   switch(action.type) {
     case ROLL_DICE:

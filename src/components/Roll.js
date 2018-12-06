@@ -23,9 +23,8 @@ class Roll extends Component {
 
     if (this.props.game.rollAvailable) {
       let { currentRoll } = this.props.game;
-      let roll = [...currentRoll];
 
-      let updatedRoll = roll.map(dice => random(1, 6))
+      let updatedRoll = currentRoll.map(dice => random(1, 6))
       this.props.rollDice(updatedRoll);
       // make roll unavailable until user selects a die.
       this.props.rollAvailable(false);
@@ -53,41 +52,42 @@ class Roll extends Component {
 
 
   handleTurnCompletion(currentPlayer) {
-    let updatedPlayersState = [...this.props.options.players];
-    let updatedCurrentPlayer = { ...currentPlayer};
+    let playersState = this.props.options.players;
+    let nextPlayerID = this.playerChange(currentPlayer);
+    let hasQualified = this.qualificationHandler(currentPlayer);
+    let totalScore = hasQualified ? this.totalScore(currentPlayer) : 0;
 
-    let nextPlayerID = this.playerChange(updatedCurrentPlayer);
-    let hasQualified = this.qualificationHandler(updatedCurrentPlayer);
-    let totalScore = hasQualified ? this.totalScore(updatedCurrentPlayer) : 0;
-
-    updatedPlayersState.map(player => {
+    let updatedPlayersState = playersState.map(player => {
       if (player.id === currentPlayer.id) {
-        currentPlayer.active = "false";
-        player.playedTurn = true;
-        player.scoreTotal = totalScore;
-        player.qualified = hasQualified;
+        return {
+          ...player,
+          active: "false",
+          playedTurn: true,
+          scoreTotal: totalScore,
+          qualified: hasQualified
+        };
       } else if (player.id === nextPlayerID) {
-        player.active = "true";
+        return {
+          ...player,
+          active: "true"
+        };
+      } else {
+        return player;
       }
-      return player;
     });
+
+    this.props.updatePlayerStats(updatedPlayersState);
 
     if (this.roundOver(updatedPlayersState)) {
       this.determineWinner(updatedPlayersState);
-      this.resetPlayerSelections(updatedPlayersState);
-      // Make Start Round Btn available again
       this.props.roundStart(false);
-      // need to change the state passed here with an updated version of the player who starts the next round
-      this.props.updatePlayerStats(updatedPlayersState);
-      //new round therefore starting player is the next player after the last starting player
-    } else {
-      this.props.updatePlayerStats(updatedPlayersState);
     }
   }
 
 
   playerChange(currentPlayer) {
-    let nextPlayerID = currentPlayer.id + 1;
+    let updatedCurrentPlayer = { ...currentPlayer }
+    let nextPlayerID = updatedCurrentPlayer.id + 1;
     // need this check to determine if we have passed the player array length
     if (nextPlayerID > this.props.options.players.length) {
       nextPlayerID = 1;
@@ -101,20 +101,23 @@ class Roll extends Component {
   }
 
 
-  roundOver(playerState) {
-    return playerState.every(player => player.playedTurn );
+  roundOver(updatedPlayersState) {
+    return updatedPlayersState.every(player => player.playedTurn );
   }
 
 
   addToSelection(player, diceNum) {
     let updatedPlayerSelection = {...player};
-    let updatedPlayersState = [...this.props.options.players];
+    let playersState = this.props.options.players;
 
     updatedPlayerSelection.selections.push(diceNum);
 
-    updatedPlayersState.map(playerInfo => {
+    let updatedPlayersState = playersState.map(playerInfo => {
       if (playerInfo.id === player.id) {
-        return updatedPlayerSelection;
+        return {
+          ...playerInfo,
+          selections: updatedPlayerSelection.selections
+        };
       } else {
         return playerInfo;
       }
@@ -134,9 +137,15 @@ class Roll extends Component {
     let highestScore = null;
     let winningPlayers = [];
     let index = 0;
-    let sortedScores = [...updatedPlayersState].sort((a,b) => {
-      return a.scoreTotal > b.scoreTotal ? -1 : 1
-    });
+    //let playersState = this.props.options.players;
+
+    let sortedScores = updatedPlayersState
+      .map(player => {
+        return {...player};
+      })
+      .sort((a,b) => {
+        return a.scoreTotal > b.scoreTotal ? -1 : 1
+      });
 
     highestScore = sortedScores[index];
 
@@ -148,33 +157,50 @@ class Roll extends Component {
     if (winningPlayers.length > 1) {
       this.tieHandler(updatedPlayersState);
     } else {
-      updatedPlayersState.map(player =>{
-       if (player.id === sortedScores[0].id) {
-         player.profit += (this.props.options.players.length * this.props.options.stakeAmount);
-       }
-       return player;
-     });
-     this.props.updatePlayerStats(updatedPlayersState)
-   }
+      this.payWinner(updatedPlayersState, sortedScores[0].id);
+    }
   }
 
-  tieHandler(updatedPlayersState) {
-    let newPlayerState = updatedPlayersState.map(player => {
-      player.profit -= this.props.options.stakeAmount;
-      return player;
+
+  payWinner(updatedPlayersState, winnerID) {
+    let newPlayersState = updatedPlayersState.map(player => {
+      if (player.id === winnerID) {
+        return {
+          ...player,
+          profit: player.profit + (this.props.options.players.length * this.props.options.stakeAmount)
+        };
+      } else {
+        return player;
+      }
     });
 
-    this.props.updatePlayerStats(newPlayerState)
+    this.props.updatePlayerStats(newPlayersState)
+  }
+
+
+  tieHandler(updatedPlayersState) {
+    let newPlayersState = updatedPlayersState.map(player => {
+      return {
+        ...player,
+        profit: player.profit - this.props.options.stakeAmount
+      }
+    });
+
+    this.props.updatePlayerStats(newPlayersState);
+    this.resetPlayerSelections(newPlayersState);
   }
 
   resetPlayerSelections(updatedPlayersState) {
-    let newPlayerState = updatedPlayersState.map(player => {
-      player.selections = [];
-      player.playedTurn = false;
-      return player;
+    let newPlayersState = updatedPlayersState.map(player => {
+      return {
+        ...player,
+        selections: [],
+        playedTurn: false
+      };
     });
 
-    this.props.updatePlayerStats(newPlayerState);
+    this.props.updatePlayerStats(newPlayersState);
+    this.resetPlayerSelections(newPlayersState);
   }
 
 
