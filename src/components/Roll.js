@@ -174,7 +174,8 @@ class Roll extends Component {
       }
     });
 
-    this.props.updatePlayerStats(newPlayersState)
+    this.props.updatePlayerStats(newPlayersState);
+    this.resetPlayerSelections(newPlayersState);
   }
 
 
@@ -200,7 +201,6 @@ class Roll extends Component {
     });
 
     this.props.updatePlayerStats(newPlayersState);
-    this.resetPlayerSelections(newPlayersState);
   }
 
 
