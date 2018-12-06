@@ -6,7 +6,8 @@ import {
   takeFromRoll,
   resetRoll,
   roundStart,
-  rollAvailable
+  rollAvailable,
+  updatePot
  } from '../actions/gameActions';
 import { addToSelection, updatePlayerStats} from '../actions/optionActions';
 import { diceMap } from '../utils/diceMap';
@@ -137,7 +138,6 @@ class Roll extends Component {
     let highestScore = null;
     let winningPlayers = [];
     let index = 0;
-    //let playersState = this.props.options.players;
 
     let sortedScores = updatedPlayersState
       .map(player => {
@@ -147,18 +147,26 @@ class Roll extends Component {
         return a.scoreTotal > b.scoreTotal ? -1 : 1
       });
 
-    highestScore = sortedScores[index];
+    highestScore = sortedScores[index].scoreTotal;
 
     while (sortedScores[index].scoreTotal === highestScore) {
       winningPlayers.push(sortedScores[index])
       index += 1;
     }
 
-    if (winningPlayers.length > 1) {
-      this.tieHandler(updatedPlayersState);
-    } else {
+    if (winningPlayers.length === 1) {
       this.payWinner(updatedPlayersState, sortedScores[0].id);
+      this.resetPot();
+    } else {
+      // tie game here, don't reset pot.
+      this.resetPlayerSelections(updatedPlayersState)
     }
+  }
+
+
+  resetPot = () => {
+    let newPotState = 0;
+    this.props.updatePot(newPotState);
   }
 
 
@@ -167,7 +175,7 @@ class Roll extends Component {
       if (player.id === winnerID) {
         return {
           ...player,
-          profit: player.profit + (this.props.options.players.length * this.props.options.stakeAmount)
+          profit: player.profit + this.props.game.pot
         };
       } else {
         return player;
@@ -262,6 +270,7 @@ export default connect(mapStateToProps, {
    resetRoll,
    updatePlayerStats,
    roundStart,
-   rollAvailable
+   rollAvailable,
+   updatePot
  }
 )(Roll);

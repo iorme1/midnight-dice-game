@@ -4,6 +4,7 @@ import Scoreboard from './components/Scoreboard';
 import GameModal from './components/GameModal';
 import Roll from './components/Roll';
 import StartRound from './components/StartRound';
+import Pot from './components/Pot';
 import { Provider } from 'react-redux';
 import store from './store';
 import 'bootstrap/dist/css/bootstrap.min.css'
@@ -17,6 +18,7 @@ class App extends Component {
         <div className="App">
           <AppNavbar/>
           <StartRound/>
+          <Pot/>
           <GameModal/>
           <Roll/>
           <Scoreboard/>

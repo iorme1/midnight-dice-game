@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Container, Button } from 'reactstrap';
 import { connect } from 'react-redux';
 import { updatePlayerStats } from '../actions/optionActions';
-import { roundStart } from '../actions/gameActions';
+import { roundStart, updatePot } from '../actions/gameActions';
 
 class StartRound extends Component {
     startGame = () => {
@@ -29,6 +29,12 @@ class StartRound extends Component {
       });
 
       this.props.updatePlayerStats(updatedPlayersState);
+      this.addAntesToPot();
+    }
+
+    addAntesToPot = () => {
+      let newPotState = this.props.game.pot + (this.props.options.players.length * this.props.options.stakeAmount)
+      this.props.updatePot(newPotState)
     }
 
 
@@ -50,4 +56,8 @@ const mapStateToProps = (state) => ({
   game: state.game
 });
 
-export default connect(mapStateToProps, { updatePlayerStats, roundStart })(StartRound);
+export default connect(mapStateToProps, {
+  updatePlayerStats,
+  roundStart,
+  updatePot
+})(StartRound);

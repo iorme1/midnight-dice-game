@@ -5,7 +5,8 @@ import {
   TAKE_FROM_ROLL,
   RESET_ROLL,
   ROUND_STATUS_CHANGE,
-  ROLL_STATUS_CHANGE
+  ROLL_STATUS_CHANGE,
+  UPDATE_POT
 } from '../actions/types';
 
 const initialState = {
@@ -14,7 +15,7 @@ const initialState = {
   rollAvailable: true,
   pot: 0
 };
- 
+
 export default function(state = initialState, action) {
   switch(action.type) {
     case ROLL_DICE:
@@ -41,6 +42,11 @@ export default function(state = initialState, action) {
         return {
           ...state,
           rollAvailable: action.payload
+        }
+      case UPDATE_POT:
+        return {
+          ...state,
+          pot: action.payload
         }
     default:
       return state;

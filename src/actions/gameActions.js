@@ -3,7 +3,8 @@ import {
   TAKE_FROM_ROLL,
   RESET_ROLL,
   ROUND_STATUS_CHANGE,
-  ROLL_STATUS_CHANGE
+  ROLL_STATUS_CHANGE,
+  UPDATE_POT
 } from './types';
 
 export const rollDice = (roll) => (dispatch) => {
@@ -38,5 +39,12 @@ export const rollAvailable = (rollStatus) => (dispatch) => {
   dispatch({
     type: ROLL_STATUS_CHANGE,
     payload: rollStatus
+  })
+}
+
+export const updatePot = (pot) => (dispatch) => {
+  dispatch({
+    type: UPDATE_POT,
+    payload: pot
   })
 }
