@@ -40,21 +40,16 @@ class Roll extends Component {
     let currentPlayer = this.props.options.players.find(player => player.active === "true");
     let updatedRoll = currentRoll.filter((el,idx) => idx !== diceIdx );
 
-    this.props.takeFromRoll(updatedRoll)
-    this.addToSelection(currentPlayer, diceNum)
+    this.props.takeFromRoll(updatedRoll);
+    this.addToSelection(currentPlayer, diceNum);
     // we have taken at least one die here, so we have option to roll again.
     this.props.rollAvailable(true);
-
-    if (currentPlayer.selections.length === 6) {
-      this.handleTurnCompletion(currentPlayer);
-      this.resetRoll();
-    }
   }
 
 
-  handleTurnCompletion(currentPlayer) {
-    let playersState = this.props.options.players;
-    let nextPlayerID = this.playerChange(currentPlayer);
+  handleTurnCompletion(playersState) {
+    let currentPlayer = playersState.find(player => player.active === "true");
+    let nextPlayerID = this.playerChange(currentPlayer.id);
     let hasQualified = this.qualificationHandler(currentPlayer);
     let totalScore = hasQualified ? this.totalScore(currentPlayer) : 0;
 
@@ -77,18 +72,17 @@ class Roll extends Component {
       }
     });
 
-    this.props.updatePlayerStats(updatedPlayersState);
-
     if (this.roundOver(updatedPlayersState)) {
       this.determineWinner(updatedPlayersState);
       this.props.roundStart(false);
+    } else {
+      this.props.updatePlayerStats(updatedPlayersState);
     }
   }
 
 
-  playerChange(currentPlayer) {
-    let updatedCurrentPlayer = { ...currentPlayer }
-    let nextPlayerID = updatedCurrentPlayer.id + 1;
+  playerChange(currentPlayerID) {
+    let nextPlayerID = currentPlayerID + 1;
     // need this check to determine if we have passed the player array length
     if (nextPlayerID > this.props.options.players.length) {
       nextPlayerID = 1;
@@ -108,23 +102,28 @@ class Roll extends Component {
 
 
   addToSelection(player, diceNum) {
-    let updatedPlayerSelection = {...player};
+    let playerSelection = [...player.selections]
     let playersState = this.props.options.players;
 
-    updatedPlayerSelection.selections.push(diceNum);
+    playerSelection.push(diceNum);
 
     let updatedPlayersState = playersState.map(playerInfo => {
       if (playerInfo.id === player.id) {
         return {
           ...playerInfo,
-          selections: updatedPlayerSelection.selections
+          selections: playerSelection
         };
       } else {
         return playerInfo;
       }
     });
 
-    this.props.addToSelection(updatedPlayersState);
+    if (playerSelection.length === 6) {
+      this.handleTurnCompletion(updatedPlayersState);
+      this.resetRoll();
+    } else {
+      this.props.addToSelection(updatedPlayersState);
+    }
   }
 
 
@@ -141,25 +140,32 @@ class Roll extends Component {
 
     let sortedScores = updatedPlayersState
       .map(player => {
-        return {...player};
+        return {
+          ...player,
+          selections: [...player.selections]
+        };
       })
       .sort((a,b) => {
-        return a.scoreTotal > b.scoreTotal ? -1 : 1
+        return a.scoreTotal > b.scoreTotal ? -1 : 1;
       });
 
     highestScore = sortedScores[index].scoreTotal;
 
-    while (sortedScores[index].scoreTotal === highestScore) {
-      winningPlayers.push(sortedScores[index])
+    while ( (index < sortedScores.length) && (sortedScores[index].scoreTotal === highestScore) ) {
+      winningPlayers.push(sortedScores[index]);
       index += 1;
     }
 
     if (winningPlayers.length === 1) {
-      this.payWinner(updatedPlayersState, sortedScores[0].id);
+      let winningPlayerID = sortedScores[0].id;
+      this.payWinner(updatedPlayersState, winningPlayerID);
       this.resetPot();
     } else {
-      // tie game here, don't reset pot.
-      this.resetPlayerSelections(updatedPlayersState)
+      /* tie game at this point, pot stays the same and continues on into the next round.
+      In the event of a tie, the player starting the next round will be chosen
+      at random (whereas normally the winner would be starting the next round) */
+      let nextPlayerID = random(1, this.props.options.players.length);
+      this.newRoundStartingPlayer(nextPlayerID, updatedPlayersState);
     }
   }
 
@@ -170,37 +176,55 @@ class Roll extends Component {
   }
 
 
-  payWinner(updatedPlayersState, winnerID) {
-    let newPlayersState = updatedPlayersState.map(player => {
+  payWinner(playersState, winnerID) {
+    let updatedPlayersState = playersState.map(player => {
       if (player.id === winnerID) {
         return {
           ...player,
+          selections: [...player.selections],
           profit: player.profit + this.props.game.pot
         };
       } else {
-        return player;
+        return {
+          ...player,
+          selections: [...player.selections]
+        };
       }
     });
 
-    this.props.updatePlayerStats(newPlayersState);
-    this.resetPlayerSelections(newPlayersState);
+    this.newRoundStartingPlayer(winnerID, updatedPlayersState);
   }
 
 
-  tieHandler(updatedPlayersState) {
-    let newPlayersState = updatedPlayersState.map(player => {
-      return {
-        ...player,
-        profit: player.profit - this.props.options.stakeAmount
+  newRoundStartingPlayer(nextPlayerID, playersState) {
+    // the player starting the next round is the winning player of last round
+    let updatedPlayersState = playersState.map(player => {
+      if (player.id === nextPlayerID) {
+        return {
+          ...player,
+          selections: [...player.selections],
+          active: "true"
+        };
+      } else if (player.active === "true" && player.id !== nextPlayerID) {
+        return {
+          ...player,
+          selections: [...player.selections],
+          active: "false"
+        };
+      } else {
+        return {
+          ...player,
+          selections: [...player.selections]
+        }
       }
     });
 
-    this.props.updatePlayerStats(newPlayersState);
-    this.resetPlayerSelections(newPlayersState);
+    this.resetPlayerSelections(updatedPlayersState);
   }
 
-  resetPlayerSelections(updatedPlayersState) {
-    let newPlayersState = updatedPlayersState.map(player => {
+
+  resetPlayerSelections(playersState) {
+    let updatedPlayersState = playersState.map(player => {
       return {
         ...player,
         selections: [],
@@ -208,7 +232,7 @@ class Roll extends Component {
       };
     });
 
-    this.props.updatePlayerStats(newPlayersState);
+    this.props.updatePlayerStats(updatedPlayersState);
   }
 
 

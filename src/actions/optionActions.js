@@ -19,10 +19,10 @@ export const setPlayers = (players) => (dispatch) => {
   });
 };
 
-export const addToSelection = (player) => (dispatch) => {
+export const addToSelection = (players) => (dispatch) => {
   dispatch({
     type: ADD_TO_SELECTION,
-    payload: player
+    payload: players
   });
 };
 
