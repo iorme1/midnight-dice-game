@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { renderToStaticMarkup } from 'react-dom/server';
 import random from '../utils/random';
 import { connect } from 'react-redux';
 import {
@@ -9,16 +10,24 @@ import {
   rollAvailable,
   updatePot
  } from '../actions/gameActions';
+import SweetAlert from 'sweetalert-react';
+import 'sweetalert/dist/sweetalert.css';
 import { addToSelection, updatePlayerStats} from '../actions/optionActions';
 import { diceMap } from '../utils/diceMap';
 import Dice from './Dice';
+import RollUnavailableAlert from './AlertRollUnavailable';
+import RoundHasNotBegunAlert from './AlertRoundHasNotBegun';
 import { Container,Button} from 'reactstrap';
 
 
 class Roll extends Component {
+  state = {
+    show: false
+  }
+
   rollDice = () => {
     if (this.props.game.roundInProgress === false) {
-      alert('Round has not begun yet')
+      this.setState({ show: true })
       return;
     }
 
@@ -30,7 +39,7 @@ class Roll extends Component {
       // make roll unavailable until user selects a die.
       this.props.rollAvailable(false);
     } else {
-      alert('You must pick at least one die before rolling again');
+      this.setState({ show: true })
     }
   }
 
@@ -259,6 +268,20 @@ class Roll extends Component {
 
     return (
       <Container>
+        <SweetAlert
+          show={this.state.show}
+          title="Rollling Not Allowed"
+          html
+          text={renderToStaticMarkup(<RollUnavailableAlert />)}
+          onConfirm={() => this.setState({ show: false })}
+        />
+        <SweetAlert
+          show={this.state.show}
+          title=""
+          html
+          text={renderToStaticMarkup(<RoundHasNotBegunAlert />)}
+          onConfirm={() => this.setState({ show: false })}
+        />
         <div className="row">
           <div className="col-md-2">
             <Button

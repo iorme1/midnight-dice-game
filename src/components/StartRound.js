@@ -1,13 +1,21 @@
 import React, { Component } from 'react';
 import { Container, Button } from 'reactstrap';
+import { renderToStaticMarkup } from 'react-dom/server';
+import SweetAlert from 'sweetalert-react';
+import 'sweetalert/dist/sweetalert.css';
+import RoundInProgressAlert from './AlertRoundInProgress';
 import { connect } from 'react-redux';
 import { updatePlayerStats } from '../actions/optionActions';
 import { roundStart, updatePot } from '../actions/gameActions';
 
 class StartRound extends Component {
+    state = {
+      show: false
+    }
+
     startGame = () => {
       if (this.props.game.roundInProgress) {
-        alert('Round is already in progress...');
+        this.setState({ show: true })
         return;
       }
 
@@ -41,6 +49,13 @@ class StartRound extends Component {
     render() {
       return (
         <Container style={{textAlign: 'center'}}>
+          <SweetAlert
+            show={this.state.show}
+            title=""
+            html
+            text={renderToStaticMarkup(<RoundInProgressAlert />)}
+            onConfirm={() => this.setState({ show: false })}
+          />
           <Button
           color="success"
           onClick={this.startGame}
