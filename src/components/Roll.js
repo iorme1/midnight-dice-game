@@ -22,12 +22,13 @@ import { Container,Button} from 'reactstrap';
 
 class Roll extends Component {
   state = {
-    show: false
+    rollAlert: false,
+    roundAlert: false
   }
 
   rollDice = () => {
     if (this.props.game.roundInProgress === false) {
-      this.setState({ show: true })
+      this.setState({ roundAlert: true });
       return;
     }
 
@@ -39,7 +40,7 @@ class Roll extends Component {
       // make roll unavailable until user selects a die.
       this.props.rollAvailable(false);
     } else {
-      this.setState({ show: true })
+      this.setState({ rollAlert: true });
     }
   }
 
@@ -269,18 +270,18 @@ class Roll extends Component {
     return (
       <Container>
         <SweetAlert
-          show={this.state.show}
+          show={this.state.rollAlert}
           title="Rollling Not Allowed"
           html
           text={renderToStaticMarkup(<RollUnavailableAlert />)}
-          onConfirm={() => this.setState({ show: false })}
+          onConfirm={() => this.setState({ rollAlert: false })}
         />
         <SweetAlert
-          show={this.state.show}
+          show={this.state.roundAlert}
           title=""
           html
           text={renderToStaticMarkup(<RoundHasNotBegunAlert />)}
-          onConfirm={() => this.setState({ show: false })}
+          onConfirm={() => this.setState({ roundAlert: false })}
         />
         <div className="row">
           <div className="col-md-2">
