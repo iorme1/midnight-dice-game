@@ -284,22 +284,26 @@ class Roll extends Component {
           onConfirm={() => this.setState({ roundAlert: false })}
         />
         <div className="row">
-          <div className="col-md-2">
+          <div className="col-md-12 text-center">
             <Button
-              color="primary"
               className="m-5"
+              color="primary"
               onClick={this.rollDice}
             >
-            Roll Dice
+              Roll Dice
             </Button>
           </div>
-          {currentRoll.map( (dice,i) => (
-            <Dice
-              key={`dice${i}`}
-              diceNumber={diceMap[dice]}
-              take={this.takeFromRoll.bind(this, i, dice)}
-            />
-          ))}
+        </div>
+        <div className="row">
+          <div className="col-md-12 text-center">
+            {currentRoll.map( (dice,i) => (
+              <Dice
+                key={`dice${i}`}
+                diceNumber={diceMap[dice]}
+                take={this.takeFromRoll.bind(this, i, dice)}
+              />
+            ))}
+          </div>
         </div>
       </Container>
     );

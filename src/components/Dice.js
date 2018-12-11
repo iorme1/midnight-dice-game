@@ -4,11 +4,10 @@ import { connect } from 'react-redux';
 
 class Dice extends Component {
   render() {
-
     const rollAnimation = 'animated rollIn main-dice';
 
     return (
-      <div className="col-md-1 mt-5">
+      <div className='main-roll-placeholder mb-4 text-center'>
         <FontAwesomeIcon
           className={rollAnimation}
           icon={this.props.diceNumber}

@@ -9,23 +9,32 @@ body {
   min-height: 100%;
 }
 
-.main-dice {
-  -webkit-transition: -webkit-transform 0.35s ease;
-  -moz-transition:    -moz-transform 0.35s ease;
-  -o-transition:      -o-transform 0.35s ease;
-  transition:         transform 0.35s ease;
+.row-active {
+  background: #ffdd59;
+}
+
+.main-roll-placeholder {
+  height: 48px;
+  width: 53px;
+  background-color: black;
+  display: inline-block;
+  border-radius: 10px;
+  margin: 5px;
 }
 
 .main-dice:hover {
   cursor: pointer;
-  -ms-transform: scale(1.1) rotate(0.02deg); /*mozilla hack for smoother transform */
-  -webkit-transform: scale(1.1);
-  -moz-transform: scale(1.1);
-  -o-transform: scale(1.1);
-  transform: scale(1.1);
-  color: red;
 }
 
-.row-active {
-  background: #ffdd59;
+@media only screen and (max-width: 525px) {
+  .main-roll-placeholder {
+    margin: 0px;
+  }
+}
+
+@media only screen and (min-width: 1024px) {
+  .main-dice:hover {
+    cursor: pointer;
+    color: red;
+  }
 }

@@ -57,8 +57,8 @@ class StartRound extends Component {
             onConfirm={() => this.setState({ show: false })}
           />
           <Button
-          color="success"
-          onClick={this.startGame}
+            color="success"
+            onClick={this.startGame}
           >
             Start Round
           </Button>
