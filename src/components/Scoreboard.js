@@ -12,14 +12,7 @@ class Scoreboard extends Component {
       <Container>
         <div className="row">
           <div className="col-md-12 text-center">
-            <Table
-              style={
-                {
-                  backgroundColor: 'white',
-                  opacity: 0.8,
-                  border: '2px solid black'
-                }
-              }>
+            <Table className="scoreboard">
               <thead>
                 <tr>
                   <th>Selection</th>

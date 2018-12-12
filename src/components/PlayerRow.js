@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faMale, faMoneyBillAlt } from '@fortawesome/free-solid-svg-icons';
 import { diceMap } from '../utils/diceMap';
 
 class PlayerRow extends Component {
   render() {
-
     const { name, id, active, profit } = this.props;
     const player = this.props.options.players.find(player => player.id === id);
     const profitColor = profit >= 0 ? "green" : "red";
@@ -14,7 +14,7 @@ class PlayerRow extends Component {
     const rowStatus = active === "false" ? "" : "row-active";
 
     return (
-      <tr className={rowStatus}>
+      <tr className={`${rowStatus} row-size`}>
         <td>
           {player.selections.map((data,i) => (
             <FontAwesomeIcon
@@ -26,8 +26,14 @@ class PlayerRow extends Component {
             />
           ))}
         </td>
-        <td style={{color: profitColor}}>${profit}</td>
-        <td>{name}</td>
+        <td style={{color: profitColor}}>
+          <FontAwesomeIcon icon={faMoneyBillAlt} className="mr-2"></FontAwesomeIcon>
+          ${profit}
+        </td>
+        <td>
+          <FontAwesomeIcon className="mr-1" icon={faMale}></FontAwesomeIcon>
+          {name}
+        </td>
         <td>{status}</td>
       </tr>
     );

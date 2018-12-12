@@ -18,6 +18,8 @@ import Dice from './Dice';
 import RollUnavailableAlert from './AlertRollUnavailable';
 import RoundHasNotBegunAlert from './AlertRoundHasNotBegun';
 import { Container,Button} from 'reactstrap';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faDice } from '@fortawesome/free-solid-svg-icons';
 
 
 class Roll extends Component {
@@ -278,7 +280,7 @@ class Roll extends Component {
         />
         <SweetAlert
           show={this.state.roundAlert}
-          title=""
+          title="Round has not begun yet..."
           html
           text={renderToStaticMarkup(<RoundHasNotBegunAlert />)}
           onConfirm={() => this.setState({ roundAlert: false })}
@@ -286,11 +288,12 @@ class Roll extends Component {
         <div className="row">
           <div className="col-md-12 text-center">
             <Button
-              className="m-5"
+              className="m-4 roll-dice-btn"
               color="primary"
               onClick={this.rollDice}
             >
-              Roll Dice
+              ROLL DICE
+              <FontAwesomeIcon className="ml-1" icon={faDice} ></FontAwesomeIcon>
             </Button>
           </div>
         </div>

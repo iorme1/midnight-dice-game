@@ -19,6 +19,7 @@ body {
   background-color: black;
   display: inline-block;
   border-radius: 10px;
+  border-bottom-style: ridge;
   margin: 5px;
 }
 
@@ -26,9 +27,32 @@ body {
   cursor: pointer;
 }
 
+.pot-money {
+  color: #85bb65;
+  text-shadow: 1px 2px 3px black;
+}
+
+.start-rnd-btn {
+  box-shadow: 1px 2px 2px 3px black;
+}
+
+.roll-dice-btn {
+  box-shadow: 1px 2px 2px 3px black;
+}
+
+.scoreboard {
+  background-color: white;
+  opacity: 0.8;
+  border: 2px solid black;
+}
+
 @media only screen and (max-width: 525px) {
   .main-roll-placeholder {
-    margin: 0px;
+    margin: 1px;
+  }
+
+  .row-size {
+    height: 130px;
   }
 }
 

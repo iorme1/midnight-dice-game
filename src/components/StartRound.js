@@ -7,6 +7,8 @@ import RoundInProgressAlert from './AlertRoundInProgress';
 import { connect } from 'react-redux';
 import { updatePlayerStats } from '../actions/optionActions';
 import { roundStart, updatePot } from '../actions/gameActions';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPlayCircle } from '@fortawesome/free-solid-svg-icons';
 
 class StartRound extends Component {
     state = {
@@ -57,10 +59,12 @@ class StartRound extends Component {
             onConfirm={() => this.setState({ show: false })}
           />
           <Button
+            className="mt-2 start-rnd-btn"
             color="success"
             onClick={this.startGame}
           >
-            Start Round
+            START ROUND
+            <FontAwesomeIcon icon={faPlayCircle} className="ml-1"></FontAwesomeIcon>
           </Button>
         </Container>
       );

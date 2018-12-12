@@ -7,7 +7,7 @@ class Dice extends Component {
     const rollAnimation = 'animated rollIn main-dice';
 
     return (
-      <div className='main-roll-placeholder mb-4 text-center'>
+      <div className='main-roll-placeholder mb-2 text-center'>
         <FontAwesomeIcon
           className={rollAnimation}
           icon={this.props.diceNumber}
