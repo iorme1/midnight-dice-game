@@ -9,13 +9,11 @@ const initialState = {
     players: [
       {
         id: 1, profit: 0, selections: [],
-        active: "true", playedTurn: false,
-        scoreTotal: 0, qualified: false
+        playedTurn: false, scoreTotal: 0, qualified: false
       },
       {
         id: 2, profit: 0, selections: [],
-        active: "false", playedTurn: false,
-        scoreTotal: 0, qualified: false
+        playedTurn: false, scoreTotal: 0, qualified: false
       }
     ],
     stakeAmount: 1

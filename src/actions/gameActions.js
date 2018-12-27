@@ -4,7 +4,8 @@ import {
   RESET_ROLL,
   ROUND_STATUS_CHANGE,
   ROLL_STATUS_CHANGE,
-  UPDATE_POT
+  UPDATE_POT,
+  ACTIVE_PLAYER
 } from './types';
 
 export const rollDice = (roll) => (dispatch) => {
@@ -39,12 +40,19 @@ export const rollAvailable = (rollStatus) => (dispatch) => {
   dispatch({
     type: ROLL_STATUS_CHANGE,
     payload: rollStatus
-  })
+  });
 }
 
 export const updatePot = (pot) => (dispatch) => {
   dispatch({
     type: UPDATE_POT,
     payload: pot
-  })
+  });
+}
+
+export const activePlayerChange = (playerID) => (dispatch) => {
+  dispatch({
+    type: ACTIVE_PLAYER,
+    payload: playerID
+  });
 }

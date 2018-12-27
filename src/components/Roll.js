@@ -8,7 +8,8 @@ import {
   resetRoll,
   roundStart,
   rollAvailable,
-  updatePot
+  updatePot,
+  activePlayerChange
  } from '../actions/gameActions';
 import SweetAlert from 'sweetalert-react';
 import 'sweetalert/dist/sweetalert.css';
@@ -49,7 +50,8 @@ class Roll extends Component {
 
   takeFromRoll = (diceIdx, diceNum) => {
     let { currentRoll } = this.props.game;
-    let currentPlayer = this.props.options.players.find(player => player.active === "true");
+    let { players } = this.props.options;
+    let currentPlayer = players.find(player => player.id === this.props.game.activePlayerID)
     let updatedRoll = currentRoll.filter((el,idx) => idx !== diceIdx );
 
     this.props.takeFromRoll(updatedRoll);
@@ -60,8 +62,7 @@ class Roll extends Component {
 
 
   handleTurnCompletion(playersState) {
-    let currentPlayer = playersState.find(player => player.active === "true");
-    let nextPlayerID = this.playerChange(currentPlayer.id);
+    let currentPlayer = playersState.find(player => player.id === this.props.game.activePlayerID);
     let hasQualified = this.qualificationHandler(currentPlayer);
     let totalScore = hasQualified ? this.totalScore(currentPlayer) : 0;
 
@@ -69,20 +70,18 @@ class Roll extends Component {
       if (player.id === currentPlayer.id) {
         return {
           ...player,
-          active: "false",
           playedTurn: true,
           scoreTotal: totalScore,
           qualified: hasQualified
-        };
-      } else if (player.id === nextPlayerID) {
-        return {
-          ...player,
-          active: "true"
         };
       } else {
         return player;
       }
     });
+
+    // change active player
+    let nextActivePlayer = this.activePlayerChange();
+    this.props.activePlayerChange(nextActivePlayer);
 
     if (this.roundOver(updatedPlayersState)) {
       this.determineWinner(updatedPlayersState);
@@ -92,24 +91,24 @@ class Roll extends Component {
     }
   }
 
+  activePlayerChange() {
+    let nextActivePlayer = this.props.game.activePlayerID + 1;
 
-  playerChange(currentPlayerID) {
-    let nextPlayerID = currentPlayerID + 1;
-    // need this check to determine if we have passed the player array length
-    if (nextPlayerID > this.props.options.players.length) {
-      nextPlayerID = 1;
+    if (nextActivePlayer > this.props.options.players.length) {
+      nextActivePlayer = 1;
     }
-    return nextPlayerID;
-  }
 
-  totalScore(currentPlayer) {
-     // subtracting 5 from score due to qualifying dice 1 & 4
-    return currentPlayer.selections.reduce((sum,accum) => sum += accum) - 5;
+    return nextActivePlayer;
   }
 
 
   roundOver(updatedPlayersState) {
     return updatedPlayersState.every(player => player.playedTurn );
+  }
+
+  totalScore(currentPlayer) {
+     // subtracting 5 from score due to qualifying dice 1 & 4
+    return currentPlayer.selections.reduce((sum,accum) => sum += accum) - 5;
   }
 
 
@@ -209,29 +208,8 @@ class Roll extends Component {
 
 
   newRoundStartingPlayer(nextPlayerID, playersState) {
-    // the player starting the next round is the winning player of last round
-    let updatedPlayersState = playersState.map(player => {
-      if (player.id === nextPlayerID) {
-        return {
-          ...player,
-          selections: [...player.selections],
-          active: "true"
-        };
-      } else if (player.active === "true" && player.id !== nextPlayerID) {
-        return {
-          ...player,
-          selections: [...player.selections],
-          active: "false"
-        };
-      } else {
-        return {
-          ...player,
-          selections: [...player.selections]
-        }
-      }
-    });
-
-    this.resetPlayerSelections(updatedPlayersState);
+    this.props.activePlayerChange(nextPlayerID)
+    this.resetPlayerSelections(playersState);
   }
 
 
@@ -326,6 +304,7 @@ export default connect(mapStateToProps, {
    updatePlayerStats,
    roundStart,
    rollAvailable,
-   updatePot
+   updatePot,
+   activePlayerChange
  }
 )(Roll);

@@ -6,12 +6,13 @@ import { diceMap } from '../utils/diceMap';
 
 class PlayerRow extends Component {
   render() {
-    const { name, id, active, profit } = this.props;
+    const { name, id, profit } = this.props;
+    const { activePlayerID } = this.props.game;
     const player = this.props.options.players.find(player => player.id === id);
     const profitColor = profit >= 0 ? "green" : "red";
-    const status = active === "false" ? "No" : "Yes";
+    const status = activePlayerID === id ? "Yes" : "No";
     const rollAnimation = 'animated rollIn main-dice';
-    const rowStatus = active === "false" ? "" : "row-active";
+    const rowStatus = status === "Yes" ? "row-active" : "";
 
     return (
       <tr className={`${rowStatus} row-size`}>
