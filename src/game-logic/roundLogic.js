@@ -1,10 +1,10 @@
 const RoundLogic = {
-  handleTurnStats: function(currentPlayersState, currentPlayerID, currentPlayerSelections) {
-    let qualified = this.qualificationHandler(currentPlayerSelections);
-    let scoreTotal = qualified ? this.totalScore(currentPlayerSelections) : 0;
+  handleTurnStats: function(gameData) {
+    let qualified = this.qualificationHandler(gameData.currPlyrSelections);
+    let scoreTotal = qualified ? this.totalScore(gameData.currPlyrSelections) : 0;
 
-    let updatedPlayersState = currentPlayersState.map(player => {
-      if (player.id === currentPlayerID) {
+    let updatedPlayersState = gameData.currPlyrsState.map(player => {
+      if (player.id === gameData.currPlyr.id) {
         return {
           ...player,
           selections: [...player.selections],
@@ -28,7 +28,7 @@ const RoundLogic = {
       return {
         ...player,
         selections: [],
-        playedTurn: false 
+        playedTurn: false
       }
     });
 
@@ -173,6 +173,14 @@ const RoundLogic = {
      }
 
     return nextActivePlayer;
+  },
+
+  getCurrGameData: function(players, activePlayerID, diceNum) {
+    let currPlyr = this.getCurrentPlayer(players, activePlayerID);
+    let currPlyrSelections = this.addToSelection(currPlyr, diceNum);
+    let currPlyrsState = this.updateSelectionState(currPlyrSelections, players, activePlayerID);
+
+    return { currPlyr, currPlyrSelections, currPlyrsState };
   }
 }
 

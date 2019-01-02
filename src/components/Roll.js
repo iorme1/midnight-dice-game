@@ -48,61 +48,79 @@ class Roll extends Component {
     }
   }
 
-
   takeFromRoll(diceIdx, diceNum) {
     let { currentRoll } = this.props.game;
     let { players } = this.props.options;
     let { activePlayerID } = this.props.game;
 
+    let gameData = RoundLogic.getCurrGameData(players, activePlayerID, diceNum);
     let updatedRoll = RoundLogic.updateRoll(diceIdx, diceNum, currentRoll);
+    let isTurnOver = updatedRoll.length === 0;  // boolean to checking whether any dice remain
+
     this.props.takeFromRoll(updatedRoll);
     this.props.rollAvailable(true);
 
-    let isTurnOver = updatedRoll.length === 0;  // boolean to checking whether any dice remain
-    let currentPlayer = RoundLogic.getCurrentPlayer(players, activePlayerID);
-    let currentPlayerSelections = RoundLogic.addToSelection(currentPlayer, diceNum);
-    let currentPlayersState = RoundLogic.updateSelectionState(currentPlayerSelections, players, activePlayerID);
+    this.gameStatusChecks(isTurnOver, gameData)
+  }
 
-    // Running game status checks ...
-    // below needs to be broken down into smaller functions ... refactor later
-    if (isTurnOver && RoundLogic.roundOver(currentPlayersState)) {
 
-      this.props.resetRoll([0,0,0,0,0,0])
-      this.props.roundStart(false)
-      // input the last player's turn stats so we can then determine if there is a winner
-      let finalTurnEndingState = RoundLogic.handleTurnStats(currentPlayersState, currentPlayer.id, currentPlayerSelections);
-      let winner = RoundLogic.getWinner(finalTurnEndingState) // returns an array of winner(s)
-
-      if (winner.length === 1) {
-        let winningPlayer = winner[0];
-        let winnerID = winningPlayer.id
-        let profit = this.props.game.pot + winningPlayer.profit
-        let updatedPlayersState = RoundLogic.handleWinRound(winnerID, profit, finalTurnEndingState); // this should also reset player selections
-
-        this.props.updatePlayerStats(updatedPlayersState);
-        this.props.updatePot(0); // reset pot to $0 because we paid out winner
-        this.props.activePlayerChange(winnerID); // next player starting new round will be the winner
-      } else {
-        // game has multiple winners here, therefore it is a tie.
-        // the next player starting new round is one of the winners picked at random
-        let nextPlayer = winner[random(0, winner.length-1)].id;
-        let updatedPlayersState = RoundLogic.handleTieRound(finalTurnEndingState); // resets player selections, pot continues on into next round
-
-        this.props.updatePlayerStats(updatedPlayersState);
-        this.props.activePlayerChange(nextPlayer);
-      }
-
+  gameStatusChecks(isTurnOver, gameData) {
+    if (isTurnOver && RoundLogic.roundOver(gameData.currPlyrsState)) {
+      this.handleRoundOver(gameData)
     } else if (isTurnOver) {
-      let turnEndingState = RoundLogic.handleTurnStats(currentPlayersState, currentPlayer.id, currentPlayerSelections);
-      let nextPlayer = RoundLogic.activePlayerChange(activePlayerID, players);
-      this.props.updatePlayerStats(turnEndingState);
-      this.props.activePlayerChange(nextPlayer);
-      this.props.resetRoll([0,0,0,0,0,0]);
+      this.handleTurnOver(gameData)
     } else {
-      // players turn is not over. state only changes to add the dice selection
-      // to the current players dice selection state.
-      this.props.updatePlayerStats(currentPlayersState)
+      // player's turn is still active. no more modifications to players/game state
+      this.props.updatePlayerStats(gameData.currPlyrsState)
     }
+  }
+
+
+  handleTurnOver(gameData) {
+    let turnEndingState = RoundLogic.handleTurnStats(gameData);
+    let { players } = this.props.options;
+    let nextPlayer = RoundLogic.activePlayerChange(gameData.currPlyr.id, players);
+    this.props.updatePlayerStats(turnEndingState);
+    this.props.activePlayerChange(nextPlayer);
+    this.props.resetRoll([0,0,0,0,0,0]);
+  }
+
+
+  handleRoundOver(gameData) {
+    // input the last player's turn stats so we can then determine if there is a winner
+    let finalTurnEndingState = RoundLogic.handleTurnStats(gameData);
+    let winner = RoundLogic.getWinner(finalTurnEndingState) // returns an array of winner(s)
+
+    if (winner.length === 1) {
+      this.winRound(finalTurnEndingState, winner);
+    } else {
+      // game has multiple winners here, therefore it is a tie round.
+      this.tieRound(finalTurnEndingState, winner);
+    }
+
+    this.props.resetRoll([0,0,0,0,0,0]);
+    this.props.roundStart(false);
+  }
+
+
+  winRound(finalTurnEndingState, winner) {
+    let winningPlayer = winner[0];
+    let winnerID = winningPlayer.id
+    let profit = this.props.game.pot + winningPlayer.profit
+    let updatedPlayersState = RoundLogic.handleWinRound(winnerID, profit, finalTurnEndingState);
+
+    this.props.updatePlayerStats(updatedPlayersState);
+    this.props.updatePot(0); // reset pot to $0 because we paid out winner
+    this.props.activePlayerChange(winnerID); // next player starting new round will be the winner
+  }
+
+
+  tieRound(finalTurnEndingState, winners) {
+    let nextPlayer = winners[random(0, winners.length-1)].id; // random winner starts next round
+    let updatedPlayersState = RoundLogic.handleTieRound(finalTurnEndingState); // resets player selections, pot continues on into next round
+
+    this.props.updatePlayerStats(updatedPlayersState);
+    this.props.activePlayerChange(nextPlayer);
   }
 
 
