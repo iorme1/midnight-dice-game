@@ -21,6 +21,7 @@ import RoundHasNotBegunAlert from './AlertRoundHasNotBegun';
 import { Container,Button} from 'reactstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faDice } from '@fortawesome/free-solid-svg-icons';
+import RoundLogic from '../game-logic/roundLogic';
 
 
 class Roll extends Component {
@@ -48,199 +49,60 @@ class Roll extends Component {
   }
 
 
-  takeFromRoll = (diceIdx, diceNum) => {
+  takeFromRoll(diceIdx, diceNum) {
     let { currentRoll } = this.props.game;
     let { players } = this.props.options;
-    let currentPlayer = players.find(player => player.id === this.props.game.activePlayerID)
-    let updatedRoll = currentRoll.filter((el,idx) => idx !== diceIdx );
+    let { activePlayerID } = this.props.game;
 
+    let updatedRoll = RoundLogic.updateRoll(diceIdx, diceNum, currentRoll);
     this.props.takeFromRoll(updatedRoll);
-    this.addToSelection(currentPlayer, diceNum);
-    // we have taken at least one die here, so we have option to roll again.
     this.props.rollAvailable(true);
-  }
 
+    let isTurnOver = updatedRoll.length === 0;  // boolean to checking whether any dice remain
+    let currentPlayer = RoundLogic.getCurrentPlayer(players, activePlayerID);
+    let currentPlayerSelections = RoundLogic.addToSelection(currentPlayer, diceNum);
+    let currentPlayersState = RoundLogic.updateSelectionState(currentPlayerSelections, players, activePlayerID);
 
-  handleTurnCompletion(playersState) {
-    let currentPlayer = playersState.find(player => player.id === this.props.game.activePlayerID);
-    let hasQualified = this.qualificationHandler(currentPlayer);
-    let totalScore = hasQualified ? this.totalScore(currentPlayer) : 0;
+    // Running game status checks ...
+    // below needs to be broken down into smaller functions ... refactor later
+    if (isTurnOver && RoundLogic.roundOver(currentPlayersState)) {
 
-    let updatedPlayersState = playersState.map(player => {
-      if (player.id === currentPlayer.id) {
-        return {
-          ...player,
-          playedTurn: true,
-          scoreTotal: totalScore,
-          qualified: hasQualified
-        };
+      this.props.resetRoll([0,0,0,0,0,0])
+      this.props.roundStart(false)
+      // input the last player's turn stats so we can then determine if there is a winner
+      let finalTurnEndingState = RoundLogic.handleTurnStats(currentPlayersState, currentPlayer.id, currentPlayerSelections);
+      let winner = RoundLogic.getWinner(finalTurnEndingState) // returns an array of winner(s)
+
+      if (winner.length === 1) {
+        let winningPlayer = winner[0];
+        let winnerID = winningPlayer.id
+        let profit = this.props.game.pot + winningPlayer.profit
+        let updatedPlayersState = RoundLogic.handleWinRound(winnerID, profit, finalTurnEndingState); // this should also reset player selections
+
+        this.props.updatePlayerStats(updatedPlayersState);
+        this.props.updatePot(0); // reset pot to $0 because we paid out winner
+        this.props.activePlayerChange(winnerID); // next player starting new round will be the winner
       } else {
-        return player;
+        // game has multiple winners here, therefore it is a tie.
+        // the next player starting new round is one of the winners picked at random
+        let nextPlayer = winner[random(0, winner.length-1)].id;
+        let updatedPlayersState = RoundLogic.handleTieRound(finalTurnEndingState); // resets player selections, pot continues on into next round
+
+        this.props.updatePlayerStats(updatedPlayersState);
+        this.props.activePlayerChange(nextPlayer);
       }
-    });
 
-    // change active player
-    let nextActivePlayer = this.activePlayerChange();
-    this.props.activePlayerChange(nextActivePlayer);
-
-    if (this.roundOver(updatedPlayersState)) {
-      this.determineWinner(updatedPlayersState);
-      this.props.roundStart(false);
+    } else if (isTurnOver) {
+      let turnEndingState = RoundLogic.handleTurnStats(currentPlayersState, currentPlayer.id, currentPlayerSelections);
+      let nextPlayer = RoundLogic.activePlayerChange(activePlayerID, players);
+      this.props.updatePlayerStats(turnEndingState);
+      this.props.activePlayerChange(nextPlayer);
+      this.props.resetRoll([0,0,0,0,0,0]);
     } else {
-      this.props.updatePlayerStats(updatedPlayersState);
+      // players turn is not over. state only changes to add the dice selection
+      // to the current players dice selection state.
+      this.props.updatePlayerStats(currentPlayersState)
     }
-  }
-
-  activePlayerChange() {
-    let nextActivePlayer = this.props.game.activePlayerID + 1;
-
-    if (nextActivePlayer > this.props.options.players.length) {
-      nextActivePlayer = 1;
-    }
-
-    return nextActivePlayer;
-  }
-
-
-  roundOver(updatedPlayersState) {
-    return updatedPlayersState.every(player => player.playedTurn );
-  }
-
-  totalScore(currentPlayer) {
-     // subtracting 5 from score due to qualifying dice 1 & 4
-    return currentPlayer.selections.reduce((sum,accum) => sum += accum) - 5;
-  }
-
-
-  addToSelection(player, diceNum) {
-    let playerSelection = [...player.selections]
-    let playersState = this.props.options.players;
-
-    playerSelection.push(diceNum);
-
-    let updatedPlayersState = playersState.map(playerInfo => {
-      if (playerInfo.id === player.id) {
-        return {
-          ...playerInfo,
-          selections: playerSelection
-        };
-      } else {
-        return playerInfo;
-      }
-    });
-
-    if (playerSelection.length === 6) {
-      this.handleTurnCompletion(updatedPlayersState);
-      this.resetRoll();
-    } else {
-      this.props.addToSelection(updatedPlayersState);
-    }
-  }
-
-
-  resetRoll() {
-    let newDiceState = [0,0,0,0,0,0];
-    this.props.resetRoll(newDiceState);
-  }
-
-
-  determineWinner(updatedPlayersState) {
-    let highestScore = null;
-    let winningPlayers = [];
-    let index = 0;
-
-    let sortedScores = updatedPlayersState
-      .map(player => {
-        return {
-          ...player,
-          selections: [...player.selections]
-        };
-      })
-      .sort((a,b) => {
-        return a.scoreTotal > b.scoreTotal ? -1 : 1;
-      });
-
-    highestScore = sortedScores[index].scoreTotal;
-
-    while ( (index < sortedScores.length) && (sortedScores[index].scoreTotal === highestScore) ) {
-      winningPlayers.push(sortedScores[index]);
-      index += 1;
-    }
-
-    if (winningPlayers.length === 1) {
-      let winningPlayerID = sortedScores[0].id;
-      this.payWinner(updatedPlayersState, winningPlayerID);
-      this.resetPot();
-    } else {
-      /* tie game at this point, pot stays the same and continues on into the next round.
-      In the event of a tie, the player starting the next round will be chosen
-      at random (whereas normally the winner would be starting the next round) */
-      let nextPlayerID = random(1, this.props.options.players.length);
-      this.newRoundStartingPlayer(nextPlayerID, updatedPlayersState);
-    }
-  }
-
-
-  resetPot = () => {
-    let newPotState = 0;
-    this.props.updatePot(newPotState);
-  }
-
-
-  payWinner(playersState, winnerID) {
-    let updatedPlayersState = playersState.map(player => {
-      if (player.id === winnerID) {
-        return {
-          ...player,
-          selections: [...player.selections],
-          profit: player.profit + this.props.game.pot
-        };
-      } else {
-        return {
-          ...player,
-          selections: [...player.selections]
-        };
-      }
-    });
-
-    this.newRoundStartingPlayer(winnerID, updatedPlayersState);
-  }
-
-
-  newRoundStartingPlayer(nextPlayerID, playersState) {
-    this.props.activePlayerChange(nextPlayerID)
-    this.resetPlayerSelections(playersState);
-  }
-
-
-  resetPlayerSelections(playersState) {
-    let updatedPlayersState = playersState.map(player => {
-      return {
-        ...player,
-        selections: [],
-        playedTurn: false
-      };
-    });
-
-    this.props.updatePlayerStats(updatedPlayersState);
-  }
-
-
-  qualificationHandler(currentPlayer) {
-    let qualifiers = {
-      4: false,
-      1: false
-    };
-
-    currentPlayer.selections.forEach(dice => {
-      if (dice === 4) {
-        if (qualifiers[4] === false) qualifiers[4] = true;
-      } else if (dice === 1) {
-        if (qualifiers[1] === false) qualifiers[1] = true;
-      }
-    });
-
-    return qualifiers[4] && qualifiers[1];
   }
 
 
