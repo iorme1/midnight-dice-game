@@ -21,7 +21,7 @@ class StartRound extends Component {
         return;
       }
 
-      let { stakeAmount } = this.props.options;
+      let { stakeAmount } = this.props.game;
 
       this.setPlayerAntes(stakeAmount)
       this.props.roundStart(true)
@@ -43,7 +43,7 @@ class StartRound extends Component {
     }
 
     addAntesToPot = () => {
-      let newPotState = this.props.game.pot + (this.props.options.players.length * this.props.options.stakeAmount)
+      let newPotState = this.props.game.pot + (this.props.options.players.length * this.props.game.stakeAmount)
       this.props.updatePot(newPotState)
     }
 

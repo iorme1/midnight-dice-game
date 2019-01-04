@@ -31,7 +31,7 @@ class Roll extends Component {
   }
 
   rollDice = () => {
-    if (this.props.game.roundInProgress === false) {
+    if (!this.props.game.roundInProgress) {
       this.setState({ roundAlert: true });
       return;
     }

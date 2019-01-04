@@ -1,16 +1,9 @@
 import {
   PLAYERS,
-  STAKES,
   ADD_TO_SELECTION,
   UPDATE_PLAYER_STATS
 } from './types';
 
-export const setStakes = (stakes) => (dispatch) => {
-  dispatch({
-    type: STAKES,
-    payload: stakes
-  });
-};
 
 export const setPlayers = (players) => (dispatch) => {
   dispatch({

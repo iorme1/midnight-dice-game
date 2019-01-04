@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import dollarConverter from '../utils/dollarConverter';
-import { setPlayers, setStakes } from '../actions/optionActions';
+import { setPlayers } from '../actions/optionActions';
+import { setStakes } from '../actions/gameActions';
 import { connect } from 'react-redux';
 import {
   Container,
@@ -31,6 +32,7 @@ class GameModal extends Component {
     e.preventDefault();
 
     const stakeAmount = dollarConverter(e.target[1].value);
+     console.log(stakeAmount)
     this.props.setStakes(stakeAmount);
 
     const playerCount = e.target[0].value;
@@ -114,11 +116,13 @@ class GameModal extends Component {
 GameModal.propTypes = {
   setStakes: PropTypes.func.isRequired,
   setPlayers: PropTypes.func.isRequired,
-  options: PropTypes.object.isRequired
+  options: PropTypes.object.isRequired,
+  game: PropTypes.object.isRequired
 };
 
 const mapStateToProps = (state) => ({
-  options: state.options
+  options: state.options,
+  game: state.game
 });
 
 

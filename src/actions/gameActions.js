@@ -5,8 +5,16 @@ import {
   ROUND_STATUS_CHANGE,
   ROLL_STATUS_CHANGE,
   UPDATE_POT,
-  ACTIVE_PLAYER
+  ACTIVE_PLAYER,
+  STAKES 
 } from './types';
+
+export const setStakes = (stakes) => (dispatch) => {
+  dispatch({
+    type: STAKES,
+    payload: stakes
+  });
+};
 
 export const rollDice = (roll) => (dispatch) => {
   dispatch({

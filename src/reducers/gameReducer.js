@@ -7,7 +7,8 @@ import {
   ROUND_STATUS_CHANGE,
   ROLL_STATUS_CHANGE,
   UPDATE_POT,
-  ACTIVE_PLAYER
+  ACTIVE_PLAYER,
+  STAKES
 } from '../actions/types';
 
 const initialState = {
@@ -15,11 +16,17 @@ const initialState = {
   roundInProgress: false,
   rollAvailable: true,
   pot: 0,
-  activePlayerID: 1
+  activePlayerID: 1,
+  stakeAmount: 1
 };
 
 export default function(state = initialState, action) {
   switch(action.type) {
+    case STAKES:
+      return {
+        ...state,
+        stakeAmount: action.payload
+      };
     case ROLL_DICE:
       return {
         ...state,
