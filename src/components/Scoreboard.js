@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 
 class Scoreboard extends Component {
   render() {
-    let { players } = this.props.options;
+    let { players } = this.props.players;
 
     return (
       <Container>
@@ -41,7 +41,7 @@ class Scoreboard extends Component {
 }
 
 const mapStateToProps = (state) => ({
-  options: state.options
+  players: state.players 
 });
 
 export default connect(mapStateToProps)(Scoreboard);

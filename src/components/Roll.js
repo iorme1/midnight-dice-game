@@ -13,7 +13,7 @@ import {
  } from '../actions/gameActions';
 import SweetAlert from 'sweetalert-react';
 import 'sweetalert/dist/sweetalert.css';
-import { addToSelection, updatePlayerStats} from '../actions/optionActions';
+import { addToSelection, updatePlayerStats} from '../actions/playerActions';
 import { diceMap } from '../utils/diceMap';
 import Dice from './Dice';
 import RollUnavailableAlert from './AlertRollUnavailable';
@@ -50,7 +50,7 @@ class Roll extends Component {
 
   takeFromRoll(diceIdx, diceNum) {
     let { currentRoll } = this.props.game;
-    let { players } = this.props.options;
+    let { players } = this.props.players;
     let { activePlayerID } = this.props.game;
 
     let gameData = RoundLogic.getCurrGameData(players, activePlayerID, diceNum);
@@ -78,7 +78,7 @@ class Roll extends Component {
 
   handleTurnOver(gameData) {
     let turnEndingState = RoundLogic.handleTurnStats(gameData);
-    let { players } = this.props.options;
+    let { players } = this.props.players;
     let nextPlayer = RoundLogic.activePlayerChange(gameData.currPlyr.id, players);
     this.props.updatePlayerStats(turnEndingState);
     this.props.activePlayerChange(nextPlayer);
@@ -173,7 +173,7 @@ class Roll extends Component {
 
 const mapStateToProps = (state) => ({
   game: state.game,
-  options: state.options
+  players: state.players 
 });
 
 export default connect(mapStateToProps, {

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import dollarConverter from '../utils/dollarConverter';
-import { setPlayers } from '../actions/optionActions';
+import { setPlayers } from '../actions/playerActions';
 import { setStakes } from '../actions/gameActions';
 import { connect } from 'react-redux';
 import {
@@ -116,12 +116,12 @@ class GameModal extends Component {
 GameModal.propTypes = {
   setStakes: PropTypes.func.isRequired,
   setPlayers: PropTypes.func.isRequired,
-  options: PropTypes.object.isRequired,
+  players: PropTypes.object.isRequired,
   game: PropTypes.object.isRequired
 };
 
 const mapStateToProps = (state) => ({
-  options: state.options,
+  players: state.players, 
   game: state.game
 });
 

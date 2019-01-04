@@ -20,9 +20,4 @@ class Dice extends Component {
   }
 }
 
-
-const mapStateToProps = (state) => ({
-  options: state.options
-})
-
-export default connect(mapStateToProps)(Dice);
+export default Dice;

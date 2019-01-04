@@ -5,7 +5,7 @@ import SweetAlert from 'sweetalert-react';
 import 'sweetalert/dist/sweetalert.css';
 import RoundInProgressAlert from './AlertRoundInProgress';
 import { connect } from 'react-redux';
-import { updatePlayerStats } from '../actions/optionActions';
+import { updatePlayerStats } from '../actions/playerActions';
 import { roundStart, updatePot } from '../actions/gameActions';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlayCircle } from '@fortawesome/free-solid-svg-icons';
@@ -29,7 +29,7 @@ class StartRound extends Component {
 
 
     setPlayerAntes = (stakeAmount) => {
-      let playersState = this.props.options.players;
+      let playersState = this.props.players.players;
 
       let updatedPlayersState = playersState.map(player => {
         return  {
@@ -43,7 +43,7 @@ class StartRound extends Component {
     }
 
     addAntesToPot = () => {
-      let newPotState = this.props.game.pot + (this.props.options.players.length * this.props.game.stakeAmount)
+      let newPotState = this.props.game.pot + (this.props.players.players.length * this.props.game.stakeAmount)
       this.props.updatePot(newPotState)
     }
 
@@ -71,7 +71,7 @@ class StartRound extends Component {
     }
 }
 const mapStateToProps = (state) => ({
-  options: state.options,
+  players: state.players, 
   game: state.game
 });
 

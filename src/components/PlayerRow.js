@@ -8,7 +8,7 @@ class PlayerRow extends Component {
   render() {
     const { name, id, profit } = this.props;
     const { activePlayerID } = this.props.game;
-    const player = this.props.options.players.find(player => player.id === id);
+    const player = this.props.players.players.find(player => player.id === id);
     const profitColor = profit >= 0 ? "green" : "red";
     const status = activePlayerID === id ? "Yes" : "No";
     const rollAnimation = 'animated rollIn main-dice';
@@ -43,7 +43,7 @@ class PlayerRow extends Component {
 
 const mapStateToProps = (state) => ({
   game: state.game,
-  options: state.options
+  players: state.players 
 });
 
 export default connect(mapStateToProps)(PlayerRow);
