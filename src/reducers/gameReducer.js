@@ -1,5 +1,3 @@
-// This is where our actual state is going to go. And where we check our actions
-
 import {
   ROLL_DICE,
   TAKE_FROM_ROLL,

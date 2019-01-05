@@ -32,7 +32,6 @@ class GameModal extends Component {
     e.preventDefault();
 
     const stakeAmount = dollarConverter(e.target[1].value);
-     console.log(stakeAmount)
     this.props.setStakes(stakeAmount);
 
     const playerCount = e.target[0].value;
@@ -48,10 +47,7 @@ class GameModal extends Component {
         scoreTotal: 0,
         qualified: false
       };
-      // Game is just starting here, player1 by default will be active first
-      if (playerNumber === 1) playerDetails.active = "true";
-      else playerDetails.active = "false";
-
+  
       players.push(playerDetails);
       playerNumber+=1;
     }
@@ -121,7 +117,7 @@ GameModal.propTypes = {
 };
 
 const mapStateToProps = (state) => ({
-  players: state.players, 
+  players: state.players,
   game: state.game
 });
 
