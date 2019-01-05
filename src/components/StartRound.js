@@ -49,6 +49,8 @@ class StartRound extends Component {
 
 
     render() {
+      let inactive = this.props.game.roundInProgress ? "inactive-btn" : "";
+
       return (
         <Container style={{textAlign: 'center'}}>
           <SweetAlert
@@ -59,7 +61,7 @@ class StartRound extends Component {
             onConfirm={() => this.setState({ show: false })}
           />
           <Button
-            className="mt-2 start-rnd-btn"
+            className={`mt-2 start-rnd-btn ${inactive}`}
             color="success"
             onClick={this.startGame}
           >
@@ -71,7 +73,7 @@ class StartRound extends Component {
     }
 }
 const mapStateToProps = (state) => ({
-  players: state.players, 
+  players: state.players,
   game: state.game
 });
 

@@ -126,6 +126,7 @@ class Roll extends Component {
 
   render() {
     let { currentRoll } = this.props.game;
+    let inactive = this.props.game.rollAvailable && this.props.game.roundInProgress ? "" : "inactive-btn";
 
     return (
       <Container>
@@ -146,7 +147,7 @@ class Roll extends Component {
         <div className="row">
           <div className="col-md-12 text-center">
             <Button
-              className="m-4 roll-dice-btn"
+              className={`m-4 roll-dice-btn ${inactive}`}
               color="primary"
               onClick={this.rollDice}
             >
@@ -173,7 +174,7 @@ class Roll extends Component {
 
 const mapStateToProps = (state) => ({
   game: state.game,
-  players: state.players 
+  players: state.players
 });
 
 export default connect(mapStateToProps, {
