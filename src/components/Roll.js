@@ -20,7 +20,7 @@ import RollUnavailableAlert from './AlertRollUnavailable';
 import RoundHasNotBegunAlert from './AlertRoundHasNotBegun';
 import { Container,Button} from 'reactstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faDice } from '@fortawesome/free-solid-svg-icons';
+import { faDice, faBan } from '@fortawesome/free-solid-svg-icons';
 import RoundLogic from '../game-logic/roundLogic';
 
 
@@ -126,7 +126,9 @@ class Roll extends Component {
 
   render() {
     let { currentRoll } = this.props.game;
-    let inactive = this.props.game.rollAvailable && this.props.game.roundInProgress ? "" : "inactive-btn";
+    let { rollAvailable } = this.props.game;
+    let { roundInProgress } = this.props.game;
+    let inactive = rollAvailable && roundInProgress ? "" : "inactive-btn";
 
     return (
       <Container>
@@ -152,7 +154,11 @@ class Roll extends Component {
               onClick={this.rollDice}
             >
               ROLL DICE
-              <FontAwesomeIcon className="ml-1" icon={faDice} ></FontAwesomeIcon>
+              <FontAwesomeIcon
+                className="ml-1"
+                icon={rollAvailable ? faDice : faBan} 
+              >
+              </FontAwesomeIcon>
             </Button>
           </div>
         </div>

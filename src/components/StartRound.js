@@ -8,7 +8,7 @@ import { connect } from 'react-redux';
 import { updatePlayerStats } from '../actions/playerActions';
 import { roundStart, updatePot } from '../actions/gameActions';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPlayCircle } from '@fortawesome/free-solid-svg-icons';
+import { faPlayCircle, faBan } from '@fortawesome/free-solid-svg-icons';
 
 class StartRound extends Component {
     state = {
@@ -49,7 +49,8 @@ class StartRound extends Component {
 
 
     render() {
-      let inactive = this.props.game.roundInProgress ? "inactive-btn" : "";
+      let { roundInProgress } = this.props.game;
+      let inactive = roundInProgress ? "inactive-btn" : "";
 
       return (
         <Container style={{textAlign: 'center'}}>
@@ -66,7 +67,10 @@ class StartRound extends Component {
             onClick={this.startGame}
           >
             START ROUND
-            <FontAwesomeIcon icon={faPlayCircle} className="ml-1"></FontAwesomeIcon>
+            <FontAwesomeIcon
+              icon={roundInProgress ? faBan : faPlayCircle}
+              className="ml-1">
+            </FontAwesomeIcon>
           </Button>
         </Container>
       );
