@@ -18,6 +18,7 @@ import { diceMap } from '../utils/diceMap';
 import Dice from './Dice';
 import RollUnavailableAlert from './AlertRollUnavailable';
 import RoundHasNotBegunAlert from './AlertRoundHasNotBegun';
+import TieAlert from './tieAlert';
 import { Container,Button} from 'reactstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faDice, faBan } from '@fortawesome/free-solid-svg-icons';
@@ -27,7 +28,8 @@ import RoundLogic from '../game-logic/roundLogic';
 class Roll extends Component {
   state = {
     rollAlert: false,
-    roundAlert: false
+    roundAlert: false,
+    tieAlert: false
   }
 
   rollDice = () => {
@@ -121,6 +123,7 @@ class Roll extends Component {
 
     this.props.updatePlayerStats(updatedPlayersState);
     this.props.activePlayerChange(nextPlayer);
+    this.setState({ tieAlert: true });
   }
 
 
@@ -132,6 +135,13 @@ class Roll extends Component {
 
     return (
       <Container>
+        <SweetAlert
+          show={this.state.tieAlert}
+          title="Tie Game"
+          html
+          text={renderToStaticMarkup(<TieAlert />)}
+          onConfirm={() => this.setState({ tieAlert: false })}
+        />
         <SweetAlert
           show={this.state.rollAlert}
           title="Rollling Not Allowed"
@@ -156,7 +166,7 @@ class Roll extends Component {
               ROLL DICE
               <FontAwesomeIcon
                 className="ml-1"
-                icon={rollAvailable ? faDice : faBan} 
+                icon={rollAvailable ? faDice : faBan}
               >
               </FontAwesomeIcon>
             </Button>
