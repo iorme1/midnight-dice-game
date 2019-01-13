@@ -29,6 +29,7 @@ class Scoreboard extends Component {
                     id={player.id}
                     active={player.active}
                     profit={player.profit}
+                    score={player.scoreTotal}
                   />
                 ))}
               </tbody>
@@ -41,7 +42,7 @@ class Scoreboard extends Component {
 }
 
 const mapStateToProps = (state) => ({
-  players: state.players 
+  players: state.players
 });
 
 export default connect(mapStateToProps)(Scoreboard);

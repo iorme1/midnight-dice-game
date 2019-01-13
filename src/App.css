@@ -51,6 +51,19 @@ body {
   background-color: grey;
 }
 
+.score-display {
+  color: white;
+  font-size: 18px;
+  font-weight: bold;
+  background-color: black;
+  border-radius: 50%;
+  padding: 5px;
+}
+
+.hidden {
+  display: none;
+}
+
 @media only screen and (max-width: 525px) {
   .main-roll-placeholder {
     margin: 1px;
