@@ -34,7 +34,7 @@ class AppNavbar extends Component {
             <Collapse isOpen={this.state.isOpen} navbar>
               <Nav className="ml-auto" navbar>
                 <NavItem>
-                  <NavLink href="https://en.wikipedia.org/wiki/Midnight_(game)">
+                  <NavLink href="https://en.wikipedia.org/wiki/Midnight_(game)" target="_blank">
                     Rules
                   </NavLink>
                 </NavItem>
