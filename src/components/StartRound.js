@@ -3,7 +3,7 @@ import { Container, Button } from 'reactstrap';
 import { renderToStaticMarkup } from 'react-dom/server';
 import SweetAlert from 'sweetalert-react';
 import 'sweetalert/dist/sweetalert.css';
-import RoundInProgressAlert from './AlertRoundInProgress';
+import RoundInProgressAlert from './sweetalerts/AlertRoundInProgress';
 import { connect } from 'react-redux';
 import { updatePlayerStats } from '../actions/playerActions';
 import { roundStart, updatePot } from '../actions/gameActions';

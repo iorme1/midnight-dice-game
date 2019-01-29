@@ -16,9 +16,10 @@ import 'sweetalert/dist/sweetalert.css';
 import { addToSelection, updatePlayerStats} from '../actions/playerActions';
 import { diceMap } from '../utils/diceMap';
 import Dice from './Dice';
-import RollUnavailableAlert from './AlertRollUnavailable';
-import RoundHasNotBegunAlert from './AlertRoundHasNotBegun';
-import TieAlert from './tieAlert';
+import RollUnavailableAlert from './sweetalerts/AlertRollUnavailable';
+import RoundHasNotBegunAlert from './sweetalerts/AlertRoundHasNotBegun';
+import TieAlert from './sweetalerts/AlertTie';
+import WinAlert from './sweetalerts/AlertWinner';
 import { Container,Button} from 'reactstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faDice, faBan } from '@fortawesome/free-solid-svg-icons';
@@ -29,7 +30,8 @@ class Roll extends Component {
   state = {
     rollAlert: false,
     roundAlert: false,
-    tieAlert: false
+    tieAlert: false,
+    winAlert: false
   }
 
   rollDice = () => {
@@ -114,6 +116,7 @@ class Roll extends Component {
     this.props.updatePlayerStats(updatedPlayersState);
     this.props.updatePot(0); // reset pot to $0 because we paid out winner
     this.props.activePlayerChange(winnerID); // next player starting new round will be the winner
+    this.setState({ winAlert: true });
   }
 
 
@@ -128,6 +131,7 @@ class Roll extends Component {
 
 
   render() {
+    let winner = this.props.game.activePlayerID;
     let { currentRoll } = this.props.game;
     let { rollAvailable } = this.props.game;
     let { roundInProgress } = this.props.game;
@@ -155,6 +159,13 @@ class Roll extends Component {
           html
           text={renderToStaticMarkup(<RoundHasNotBegunAlert />)}
           onConfirm={() => this.setState({ roundAlert: false })}
+        />
+        <SweetAlert
+          show={this.state.winAlert}
+          title={"Player " + winner + " wins"}
+          html
+          text={renderToStaticMarkup(<WinAlert />)}
+          onConfirm={() => this.setState({ winAlert: false })}
         />
         <div className="row">
           <div className="col-md-12 text-center">
