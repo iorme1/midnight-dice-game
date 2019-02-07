@@ -18,7 +18,7 @@ class PlayerRow extends Component {
       .length === 6 ? "score-display" : "hidden"
 
     return (
-      <tr className={`${rowStatus} row-size`}>
+      <tr className={`${rowStatus} row-size animated bounceInDown`}>
         <td className="selection-display">
           {player.selections.map((data,i) => (
             <FontAwesomeIcon
