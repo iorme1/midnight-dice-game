@@ -75,9 +75,20 @@ body {
   }
 }
 
+@media only screen and (min-width: 526px) {
+  .row-size {
+    height: 60px;
+  }
+  .selection-display {
+    width: 500px;
+  }
+}
+
 @media only screen and (min-width: 1024px) {
   .main-dice:hover {
     cursor: pointer;
     color: red;
   }
+
+
 }
