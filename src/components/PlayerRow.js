@@ -5,6 +5,7 @@ import { faMale, faMoneyBillAlt } from '@fortawesome/free-solid-svg-icons';
 import { diceMap } from '../utils/diceMap';
 
 class PlayerRow extends Component {
+
   render() {
     const { name, id, profit, score } = this.props;
     const { activePlayerID } = this.props.game;

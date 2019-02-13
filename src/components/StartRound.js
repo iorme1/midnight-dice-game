@@ -62,7 +62,7 @@ class StartRound extends Component {
             onConfirm={() => this.setState({ show: false })}
           />
           <Button
-            className={`mt-2 start-rnd-btn ${inactive}`}
+            className={`start-rnd-btn ${inactive}`}
             color="success"
             onClick={this.startGame}
           >

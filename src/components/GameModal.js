@@ -28,13 +28,7 @@ class GameModal extends Component {
     });
   }
 
-  onSubmit = (e) => {
-    e.preventDefault();
-
-    const stakeAmount = dollarConverter(e.target[1].value);
-    this.props.setStakes(stakeAmount);
-
-    const playerCount = e.target[0].value;
+  buildPlayers = (playerCount) => {
     let players = [];
     let playerNumber = 1;
 
@@ -47,12 +41,24 @@ class GameModal extends Component {
         scoreTotal: 0,
         qualified: false
       };
-  
+
       players.push(playerDetails);
       playerNumber+=1;
     }
+    return players;
+  }
+
+  onSubmit = (e) => {
+    e.preventDefault();
+
+    const stakeAmount = dollarConverter(e.target[1].value);
+    this.props.setStakes(stakeAmount);
+
+    const playerCount = e.target[0].value;
+    let players = this.buildPlayers(playerCount)
 
     this.props.setPlayers(players);
+    
     // closes modal
     this.toggle();
   }
