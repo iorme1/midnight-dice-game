@@ -71,11 +71,18 @@ body {
   }
 
   .row-size {
-    height: 130px;
+    height: 90px;
   }
 }
 
-@media only screen and (min-width: 526px) {
+
+@media only screen and (max-width: 768px) {
+  .scoreboard {
+    font-size: 11px;
+  }
+}
+
+@media only screen and (min-width: 768px) {
   .row-size {
     height: 60px;
   }
