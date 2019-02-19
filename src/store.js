@@ -5,26 +5,32 @@ const initialState = {};
 const middleware = [thunk];
 let store;
 
-// Only chrome can handle the redux dev tool
-// redux compose cannot handle a null or undefined middleware
-
+/*
 if (window.navigator.userAgent.includes('Chrome')) {
     store = createStore(
     rootReducer,
     initialState,
     compose(
-      applyMiddleware(...middleware),
-      window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
+      applyMiddleware(...middleware)//,
+      //window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
     ));
 } else {
     store = createStore(
     rootReducer,
     initialState,
-    compose(
+    compose (
       applyMiddleware(...middleware)
     ));
 }
+*/
 
-
+store = createStore(
+  rootReducer,
+  initialState,
+  compose(
+    applyMiddleware(...middleware),
+    window.REDUX_DEVTOOLS_EXTENSION ? window.REDUX_DEVTOOLS_EXTENSION() : f => f
+  )
+)
 
 export default store;
